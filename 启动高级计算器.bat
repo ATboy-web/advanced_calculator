@@ -1,0 +1,3 @@
+@echo off
+echo Opening Advanced Calculator...
+start "" "%~dp0calculator\index.html"

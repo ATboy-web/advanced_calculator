@@ -1,0 +1,3 @@
+@echo off
+echo Opening Executable Version Guide...
+start "" "%~dp0README-可执行文件版本.txt"

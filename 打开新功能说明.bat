@@ -1,0 +1,3 @@
+@echo off
+echo Opening New Features Guide...
+start "" "%~dp0新功能说明.txt"

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>新功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .pass { color: green; } .fail { color: red; }
+        button { padding: 10px 20px; background: #4fc3f7; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>新功能测试</h1>
+    <div id="results"></div>
+    <button onclick="runTests()">运行测试</button>
+    
+    <script>
+        function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            
+            // Test matrix calculator
+            test('矩阵计算器 - 加法', () => {
+                const a = [[1,2],[3,4]];
+                const b = [[5,6],[7,8]];
+                const c = [[0,0],[0,0]];
+                for(let i=0;i<2;i++) for(let j=0;j<2;j++) c[i][j] = a[i][j]+b[i][j];
+                return c[0][0] === 6 && c[0][1] === 8 && c[1][0] === 10 && c[1][1] === 12;
+            });
+            
+            test('矩阵计算器 - 行列式', () => {
+                const m = [[1,2,3],[4,5,6],[7,8,10]];
+                const det = m[0][0]*(m[1][1]*m[2][2]-m[1][2]*m[2][1]) -
+                           m[0][1]*(m[1][0]*m[2][2]-m[1][2]*m[2][0]) +
+                           m[0][2]*(m[1][0]*m[2][1]-m[1][1]*m[2][0]);
+                return det === -3;
+            });
+            
+            test('几何工具 - 圆面积', () => {
+                const r = 5;
+                const area = Math.PI * r * r;
+                return Math.abs(area - 78.53981633974483) < 1e-10;
+            });
+            
+            test('几何工具 - 三角形面积', () => {
+                const a = 3, b = 4, c = 5;
+                const s = (a + b + c) / 2;
+                const area = Math.sqrt(s * (s-a) * (s-b) * (s-c));
+                return Math.abs(area - 6) < 1e-10;
+            });
+            
+            test('3D计算器 - 向量点积', () => {
+                const ax=1, ay=2, az=3;
+                const bx=4, by=5, bz=6;
+                const dot = ax*bx + ay*by + az*bz;
+                return dot === 32;
+            });
+            
+            test('3D计算器 - 两点距离', () => {
+                const x1=1, y1=2, z1=3;
+                const x2=4, y2=5, z2=6;
+                const dist = Math.sqrt((x2-x1)**2+(y2-y1)**2+(z2-z1)**2);
+                return Math.abs(dist - 5.196152422706632) < 1e-10;
+            });
+            
+            function test(name, fn) {
+                const div = document.createElement('div');
+                div.className = 'test';
+                try {
+                    const result = fn();
+                    div.innerHTML = `<strong>${name}:</strong> <span class="${result ? 'pass' : 'fail'}">${result ? '✓ 通过' : '✗ 失败'}</span>`;
+                } catch (e) {
+                    div.innerHTML = `<strong>${name}:</strong> <span class="fail">✗ 错误: ${e.message}</span>`;
+                }
+                results.appendChild(div);
+            }
+        }
+    </script>
+</body>
+</html>

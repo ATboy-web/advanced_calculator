@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级计算器</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #0d1117; --surface: #161b22; --card: #21262d;
+            --primary: #6366f1; --primary-light: #818cf8; --green: #34d399; 
+            --orange: #fb923c; --red: #f87171; --cyan: #22d3ee; --pink: #f472b6;
+            --text: #f0f6fc; --text2: #8b949e; --border: #30363d;
+            --gradient: linear-gradient(135deg, #6366f1, #8b5cf6);
+            --shadow: 0 4px 12px rgba(0,0,0,0.15);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.2);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 20px;
+            --transition: all 0.2s ease;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg); color: var(--text); height: 100vh; overflow: hidden;
+            display: flex; flex-direction: column;
+            line-height: 1.5;
+        }
+        .header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 14px 20px; background: var(--surface); border-bottom: 1px solid var(--border);
+            -webkit-app-region: drag;
+            box-shadow: var(--shadow);
+        }
+        .header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .header .mode-badge {
+            padding: 6px 14px; border-radius: var(--radius-xl); font-size: 12px; font-weight: 600;
+            background: rgba(34,211,238,0.15); color: var(--cyan);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(34,211,238,0.2);
+        }
+        .tabs { 
+            display: flex; gap: 6px; overflow-x: auto; padding: 10px 16px; 
+            background: var(--surface); scrollbar-width: none;
+            border-bottom: 1px solid var(--border);
+        }
+        .tabs::-webkit-scrollbar { display: none; }
+        .tab {
+            padding: 10px 18px; border-radius: var(--radius-xl); font-size: 13px; font-weight: 500;
+            background: var(--card); color: var(--text2); cursor: pointer; 
+            white-space: nowrap; border: 1px solid var(--border);
+            transition: var(--transition);
+            user-select: none;
+            position: relative;
+        }
+        .tab:hover { 
+            border-color: var(--primary); 
+            color: var(--text); 
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        .tab.active { 
+            background: var(--gradient); 
+            color: #fff; 
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+            transform: translateY(-2px);
+        }
+        .panel { 
+            display: none; flex: 1; overflow: auto; flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        .panel.active { display: flex; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .display {
+            padding: 24px; background: var(--surface); margin: 16px; border-radius: var(--radius-lg);
+            min-height: 120px; display: flex; flex-direction: column; justify-content: flex-end;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .display::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+        .display .expr { 
+            font-size: 18px; color: var(--text2); text-align: right; 
+            min-height: 24px; word-break: break-all;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .display .result { 
+            font-size: 48px; font-weight: 700; text-align: right; margin-top: 8px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            color: var(--green);
+            text-shadow: 0 0 20px rgba(52,211,153,0.3);
+        }
+        .keypad { 
+            flex: 1; display: grid; gap: 10px; padding: 0 16px 16px; 
+            grid-template-rows: repeat(5,1fr); grid-template-columns: repeat(4,1fr);
+        }
+        .btn {
+            border: none; border-radius: var(--radius-lg); font-size: 22px; font-weight: 600;
+            cursor: pointer; transition: var(--transition); 
+            display: flex; align-items: center; justify-content: center;
+            background: var(--card); color: var(--text); 
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            min-height: 56px;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,255,255,0.05);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .btn:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        .btn:hover::after {
+            opacity: 1;
+        }
+        .btn:active { 
+            transform: translateY(0) scale(0.98);
+            box-shadow: none;
+        }
+        .btn.op { 
+            background: rgba(99,102,241,0.2); 
+            color: var(--primary-light); 
+            border-color: rgba(99,102,241,0.3);
+        }
+        .btn.op:hover {
+            background: rgba(99,102,241,0.3);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.2);
+        }
+        .btn.fn { 
+            background: rgba(251,146,60,0.2); 
+            color: var(--orange); 
+            font-size: 18px;
+            border-color: rgba(251,146,60,0.3);
+        }
+        .btn.fn:hover {
+            background: rgba(251,146,60,0.3);
+            box-shadow: 0 4px 12px rgba(251,146,60,0.2);
+        }
+        .btn.eq { 
+            background: var(--gradient); 
+            color: #fff; 
+            font-size: 28px;
+            border: none;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.4);
+        }
+        .btn.eq:hover {
+            box-shadow: 0 6px 16px rgba(99,102,241,0.5);
+            transform: translateY(-2px);
+        }
+        .btn.danger { 
+            background: rgba(248,113,113,0.2); 
+            color: var(--red);
+            border-color: rgba(248,113,113,0.3);
+        }
+        .btn.danger:hover {
+            background: rgba(248,113,113,0.3);
+            box-shadow: 0 4px 12px rgba(248,113,113,0.2);
+        }
+        .sci-keypad { 
+            flex: 1; display: grid; gap: 8px; padding: 0 16px 16px; 
+            grid-template-rows: repeat(8,1fr); grid-template-columns: repeat(5,1fr);
+        }
+        .sci-keypad .btn { 
+            font-size: 16px;
+            min-height: 48px;
+        }
+        .graph-area { 
+            flex: 1; position: relative; cursor: crosshair;
+            background: var(--surface);
+            margin: 0 16px 16px;
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .graph-area canvas { width: 100%; height: 100%; }
+        .graph-controls { 
+            padding: 16px; background: var(--surface); margin: 16px; 
+            border-radius: var(--radius-lg); 
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .graph-controls input {
+            width: 100%; padding: 12px; background: var(--card); 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); 
+            font-size: 16px; margin: 6px 0;
+            transition: var(--transition);
+        }
+        .graph-controls input:focus { 
+            border-color: var(--primary); 
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .graph-btn {
+            width: 100%; padding: 14px; background: var(--gradient); color: #fff;
+            border: none; border-radius: var(--radius-md); 
+            font-size: 17px; font-weight: 600; cursor: pointer; margin-top: 12px;
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .graph-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(99,102,241,0.4);
+        }
+        .graph-info { 
+            position: absolute; bottom: 12px; left: 12px; 
+            background: rgba(13,17,23,0.9); 
+            padding: 10px 14px; border-radius: var(--radius-sm); 
+            font-size: 13px; color: var(--text2); 
+            pointer-events: none;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+        }
+        .graph-ctrl-btn {
+            flex: 1; padding: 10px; background: var(--card); 
+            border: 1px solid var(--border); border-radius: var(--radius-sm); 
+            color: var(--text); cursor: pointer; font-size: 14px;
+            transition: var(--transition);
+            font-weight: 500;
+        }
+        .graph-ctrl-btn:hover {
+            border-color: var(--primary);
+            background: rgba(99,102,241,0.1);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow);
+        }
+        .graph-input-row {
+            display: flex; gap: 8px;
+        }
+        .graph-input-row input {
+            flex: 1;
+        }
+        .conv-input-row {
+            display: flex; gap: 8px;
+        }
+        .conv-input-row input,
+        .conv-input-row select {
+            flex: 1;
+        }
+        .conv-result-input {
+            background: var(--surface);
+            color: var(--green);
+            font-weight: 700;
+        }
+        .eq-panel { 
+            padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch;
+        }
+        .eq-type { 
+            display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap;
+            position: relative;
+            z-index: 100;
+        }
+        .eq-type button {
+            padding: 10px 18px; border-radius: var(--radius-xl); 
+            background: var(--card); color: var(--text2);
+            border: 1px solid var(--border); cursor: pointer; 
+            font-size: 14px; transition: var(--transition);
+            font-weight: 500;
+            position: relative;
+            z-index: 100;
+            pointer-events: auto;
+        }
+        .eq-type button:hover { 
+            border-color: var(--primary); 
+            color: var(--text);
+            transform: translateY(-1px);
+        }
+        .eq-type button.active { 
+            background: var(--gradient); 
+            color: #fff; 
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+            transform: translateY(-2px);
+        }
+        .eq-input { margin-bottom: 16px; }
+        .eq-input label { 
+            display: block; color: var(--text2); font-size: 14px; 
+            margin-bottom: 6px; font-weight: 500;
+        }
+        .eq-input input, .eq-input select {
+            width: 100%; padding: 14px; background: var(--card); 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); 
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        .eq-input input:focus, .eq-input select:focus { 
+            border-color: var(--primary); 
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .eq-result { 
+            padding: 20px; background: var(--surface); 
+            border-radius: var(--radius-md); margin-top: 20px; 
+            font-size: 17px; line-height: 1.8; 
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .action-btn {
+            width: 100%; padding: 16px; background: var(--gradient); color: #fff;
+            border: none; border-radius: var(--radius-md); 
+            font-size: 18px; font-weight: 600; cursor: pointer; 
+            transition: var(--transition);
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+            margin-top: 8px;
+        }
+        .action-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 24px rgba(99,102,241,0.4);
+        }
+        .action-btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+        .canvas-container { 
+            background: var(--surface); border-radius: var(--radius-lg); 
+            margin: 16px; border: 1px solid var(--border); 
+            overflow: hidden; position: relative;
+            z-index: 1;
+            box-shadow: var(--shadow);
+            min-height: 280px;
+            isolation: isolate;
+        }
+        .canvas-container canvas { 
+            display: block; width: 100%; 
+            background: var(--card);
+        }
+        .canvas-label { 
+            position: absolute; top: 12px; left: 16px; 
+            font-size: 12px; color: var(--text2); 
+            pointer-events: none;
+            background: rgba(13,17,23,0.8);
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            backdrop-filter: blur(10px);
+        }
+        .conv-panel { 
+            padding: 20px; overflow-y: auto; 
+        }
+        .conv-category { 
+            display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; 
+        }
+        .conv-category button {
+            padding: 8px 16px; border-radius: var(--radius-xl); 
+            background: var(--card); color: var(--text2);
+            border: 1px solid var(--border); cursor: pointer; 
+            font-size: 13px; transition: var(--transition);
+        }
+        .conv-category button:hover {
+            border-color: var(--primary);
+            color: var(--text);
+        }
+        .conv-category button.active { 
+            background: var(--gradient); 
+            color: #fff; 
+            border-color: transparent;
+            box-shadow: 0 4px 12px rgba(99,102,241,0.3);
+        }
+        .conv-row { margin-bottom: 16px; }
+        .conv-row label { 
+            display: block; color: var(--text2); font-size: 14px; 
+            margin-bottom: 6px; font-weight: 500; 
+        }
+        .conv-row select, .conv-row input {
+            width: 100%; padding: 14px; background: var(--card); 
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); 
+            font-size: 16px; transition: var(--transition);
+        }
+        .conv-row select:focus, .conv-row input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .conv-swap { display: flex; justify-content: center; margin: 16px 0; }
+        .conv-swap button { 
+            padding: 12px 28px; background: var(--card); 
+            color: var(--primary); border: 1px solid var(--border); 
+            border-radius: var(--radius-xl); font-size: 20px; 
+            cursor: pointer; transition: var(--transition);
+        }
+        .conv-swap button:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: rotate(180deg);
+        }
+        .conv-result { 
+            padding: 20px; background: var(--surface); 
+            border-radius: var(--radius-md); font-size: 28px; 
+            font-weight: 700; color: var(--green); 
+            text-align: center;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .history-panel { padding: 16px; overflow-y: auto; }
+        .history-item { 
+            padding: 18px; background: var(--surface); 
+            border-radius: var(--radius-md); margin-bottom: 12px; 
+            cursor: pointer; transition: var(--transition); 
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .history-item:hover { 
+            border-color: var(--primary); 
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+        .history-item .h-expr { 
+            font-size: 14px; color: var(--text2);
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .history-item .h-result { 
+            font-size: 26px; font-weight: 700; color: var(--green); 
+            margin-top: 6px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .history-item .h-time { 
+            font-size: 12px; color: var(--text2); margin-top: 6px; 
+            opacity: 0.7;
+        }
+        .history-empty { 
+            text-align: center; color: var(--text2); 
+            padding: 60px 20px;
+            font-size: 16px;
+        }
+        .matrix-grid { 
+            display: grid; gap: 6px; margin: 12px 0; 
+            grid-template-columns: repeat(auto-fit, minmax(60px, 1fr));
+        }
+        .matrix-grid input { 
+            width: 100%; padding: 10px; background: var(--card); 
+            border: 1px solid var(--border); border-radius: var(--radius-sm); 
+            color: var(--text); font-size: 15px; text-align: center;
+            transition: var(--transition);
+        }
+        .matrix-grid input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .matrix-label { 
+            color: var(--text2); font-size: 14px; 
+            margin: 12px 0 6px; font-weight: 500; 
+        }
+        .matrix-result { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            white-space: pre; font-size: 15px; line-height: 1.8;
+            background: var(--surface);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+            margin-top: 16px;
+        }
+        .geometry-formula { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            background: var(--card); padding: 16px; 
+            border-radius: var(--radius-md); margin: 12px 0; 
+            font-size: 15px; line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+        .vector-display { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            font-size: 17px; background: var(--card); 
+            padding: 16px; border-radius: var(--radius-md); 
+            margin: 12px 0; line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+        .fun-result { 
+            font-size: 19px; font-weight: 600; color: var(--green); 
+            padding: 16px; background: var(--surface); 
+            border-radius: var(--radius-md); margin-top: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .fun-formula { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            background: var(--card); padding: 14px; 
+            border-radius: var(--radius-sm); margin: 10px 0; 
+            font-size: 15px; line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+        .calculus-formula { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            background: var(--card); padding: 18px; 
+            border-radius: var(--radius-md); margin: 12px 0; 
+            font-size: 16px; line-height: 1.8; overflow-x: auto;
+            border: 1px solid var(--border);
+        }
+        .calculus-step { 
+            color: var(--text2); font-size: 14px; 
+            padding: 6px 0; border-left: 4px solid var(--primary); 
+            padding-left: 16px; margin: 8px 0;
+            background: rgba(99,102,241,0.05);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+        .stat-table { 
+            width: 100%; border-collapse: collapse; 
+            margin: 16px 0; font-size: 15px;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .stat-table th, .stat-table td { 
+            padding: 12px 16px; border: 1px solid var(--border); 
+            text-align: center; 
+        }
+        .stat-table th { 
+            background: var(--card); color: var(--primary); 
+            font-weight: 600;
+        }
+        .nt-result { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            font-size: 16px; line-height: 2.2;
+            background: var(--surface);
+            padding: 16px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border);
+        }
+        .algebra-poly { 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; 
+            font-size: 17px; background: var(--card); 
+            padding: 16px; border-radius: var(--radius-md); 
+            margin: 12px 0; line-height: 1.6;
+            border: 1px solid var(--border);
+        }
+        .iteration-table { 
+            width: 100%; border-collapse: collapse; 
+            margin: 16px 0; font-size: 14px; 
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .iteration-table th, .iteration-table td { 
+            padding: 10px 14px; border: 1px solid var(--border); 
+            text-align: center; 
+        }
+        .iteration-table th { 
+            background: var(--card); color: var(--orange); 
+            font-weight: 600;
+        }
+        .relation-chain { 
+            display: flex; align-items: center; gap: 10px; 
+            margin: 12px 0; flex-wrap: wrap; 
+        }
+        .relation-chain select { 
+            padding: 10px 14px; background: var(--card); 
+            border: 1px solid var(--border); 
+            border-radius: var(--radius-sm); 
+            color: var(--text); font-size: 15px;
+            transition: var(--transition);
+        }
+        .relation-chain select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .relation-arrow { 
+            color: var(--primary); font-size: 18px; 
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(99,102,241,0.3);
+        }
+        .relation-btns { 
+            display: flex; gap: 10px; margin: 12px 0; 
+        }
+        .relation-btns button { 
+            padding: 8px 18px; border-radius: var(--radius-sm); 
+            border: 1px solid var(--border); background: var(--card); 
+            color: var(--text); cursor: pointer; 
+            font-size: 14px; transition: var(--transition);
+            font-weight: 500;
+        }
+        .relation-btns button:hover { 
+            border-color: var(--primary); 
+            background: rgba(99,102,241,0.1);
+            transform: translateY(-1px);
+        }
+        /* 输入说明 */
+        .input-desc {
+            font-size: 11px; color: var(--text2); margin-top: 2px;
+            padding: 0 4px; line-height: 1.4;
+            opacity: 0.8;
+        }
+        .eq-input label + .input-desc { margin-top: -2px; margin-bottom: 6px; }
+        /* 公式显示 */
+        .formula-box {
+            background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2);
+            border-radius: var(--radius-md); padding: 12px 16px; margin: 8px 0;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 13px; color: var(--primary-light); line-height: 1.8;
+        }
+        .formula-box .formula-title {
+            font-weight: 600; color: var(--orange); font-size: 12px;
+            margin-bottom: 4px; font-family: inherit;
+        }
+        .process-box {
+            background: rgba(52,211,153,0.06); border: 1px solid rgba(52,211,153,0.15);
+            border-radius: var(--radius-md); padding: 12px 16px; margin: 8px 0;
+            font-size: 13px; color: var(--text2); line-height: 1.8;
+        }
+        .process-box .step { color: var(--text); }
+        /* 3D Controls */
+        .three-d-controls {
+            display: flex; gap: 8px; padding: 8px 16px; flex-wrap: wrap;
+            align-items: center;
+        }
+        .three-d-controls label {
+            font-size: 12px; color: var(--text2); margin-right: 2px;
+        }
+        .three-d-controls input[type="text"] {
+            flex: 1; min-width: 120px;
+            padding: 8px 12px; background: var(--card); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); color: var(--text); font-size: 14px;
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+        }
+        .three-d-controls input[type="text"]:focus {
+            border-color: var(--primary); outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+        }
+        .canvas-container { min-height: 320px; }
+        #threeDCanvas { cursor: grab; touch-action: none; }
+        #threeDCanvas:active { cursor: grabbing; }
+        /* Ensure 3D panel buttons are always clickable above WebGL canvas */
+        #3d .eq-type { position: relative; z-index: 999; }
+        #3d .eq-type button { position: relative; z-index: 999; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>高级计算器</h1>
+        <span id="modeLabel" class="mode-badge">DEG</span>
+    </div>
+    <div class="tabs">
+        <button class="tab active" onclick="showPanel('basic')">基础</button>
+        <button class="tab" onclick="showPanel('scientific')">科学</button>
+        <button class="tab" onclick="showPanel('graph')">绘图</button>
+        <button class="tab" onclick="showPanel('equation')">方程</button>
+        <button class="tab" onclick="showPanel('matrix')">矩阵</button>
+        <button class="tab" onclick="showPanel('geometry')">几何</button>
+        <button class="tab" onclick="showPanel('3d')">3D</button>
+        <button class="tab" onclick="showPanel('calculus')">微积分</button>
+        <button class="tab" onclick="showPanel('statistics')">概率统计</button>
+        <button class="tab" onclick="showPanel('numbertheory')">数论</button>
+        <button class="tab" onclick="showPanel('algebra')">代数</button>
+        <button class="tab" onclick="showPanel('appliedmath')">应用数学</button>
+        <button class="tab" onclick="showPanel('fun')">趣味</button>
+        <button class="tab" onclick="showPanel('converter')">转换</button>
+        <button class="tab" onclick="showPanel('history')">历史</button>
+    </div>
+
+    <!-- Basic -->
+    <div id="basic" class="panel active">
+        <div class="display"><div class="expr" id="basicExpr"></div><div class="result" id="basicResult">0</div></div>
+        <div class="keypad">
+            <button class="btn danger" onclick="calc.clear()">AC</button><button class="btn fn" onclick="calc.backspace()">⌫</button>
+            <button class="btn fn" onclick="calc.percent()">%</button><button class="btn op" onclick="calc.op('/')">÷</button>
+            <button class="btn" onclick="calc.digit('7')">7</button><button class="btn" onclick="calc.digit('8')">8</button>
+            <button class="btn" onclick="calc.digit('9')">9</button><button class="btn op" onclick="calc.op('*')">×</button>
+            <button class="btn" onclick="calc.digit('4')">4</button><button class="btn" onclick="calc.digit('5')">5</button>
+            <button class="btn" onclick="calc.digit('6')">6</button><button class="btn op" onclick="calc.op('-')">−</button>
+            <button class="btn" onclick="calc.digit('1')">1</button><button class="btn" onclick="calc.digit('2')">2</button>
+            <button class="btn" onclick="calc.digit('3')">3</button><button class="btn op" onclick="calc.op('+')">+</button>
+            <button class="btn fn" onclick="calc.negate()">±</button><button class="btn" onclick="calc.digit('0')">0</button>
+            <button class="btn" onclick="calc.dot()">.</button><button class="btn eq" onclick="calc.equals()">=</button>
+        </div>
+    </div>
+
+    <!-- Scientific -->
+    <div id="scientific" class="panel">
+        <div class="display"><div class="expr" id="sciExpr"></div><div class="result" id="sciResult">0</div></div>
+        <div class="sci-keypad">
+            <button class="btn fn" id="btnShift" onclick="calc.toggleShift()">2nd</button>
+            <button class="btn fn" onclick="calc.insertConst('π')">π</button><button class="btn fn" onclick="calc.insertConst('e')">e</button>
+            <button class="btn danger" onclick="calc.clear()">AC</button><button class="btn fn" onclick="calc.backspace()">⌫</button>
+            <button class="btn fn" id="btnSin" onclick="calc.func('sin')">sin</button><button class="btn fn" id="btnCos" onclick="calc.func('cos')">cos</button>
+            <button class="btn fn" id="btnTan" onclick="calc.func('tan')">tan</button><button class="btn op" onclick="calc.paren('(')">(</button><button class="btn op" onclick="calc.paren(')')">)</button>
+            <button class="btn fn" id="btnLn" onclick="calc.func('ln')">ln</button><button class="btn fn" id="btnLog" onclick="calc.func('log')">log</button>
+            <button class="btn fn" onclick="calc.func('sqrt')">√</button><button class="btn op" onclick="calc.square()">x²</button><button class="btn op" onclick="calc.op('^')">x^y</button>
+            <button class="btn fn" onclick="calc.reciprocal()">1/x</button><button class="btn fn" onclick="calc.func('abs')">|x|</button>
+            <button class="btn fn" onclick="calc.factorial()">n!</button><button class="btn" onclick="calc.digit('7')">7</button><button class="btn" onclick="calc.digit('8')">8</button>
+            <button class="btn fn" onclick="calc.percent()">%</button><button class="btn op" onclick="calc.op('/')">÷</button>
+            <button class="btn op" onclick="calc.op('*')">×</button><button class="btn" onclick="calc.digit('9')">9</button><button class="btn" onclick="calc.digit('4')">4</button>
+            <button class="btn fn" id="btnAngle" onclick="calc.toggleAngle()">DEG</button><button class="btn" onclick="calc.digit('5')">5</button>
+            <button class="btn" onclick="calc.digit('6')">6</button><button class="btn op" onclick="calc.op('-')">−</button><button class="btn op" onclick="calc.op('+')">+</button>
+            <button class="btn fn" onclick="calc.exp()">eˣ</button><button class="btn fn" onclick="calc.func('ceil')">⌈x⌉</button>
+            <button class="btn fn" onclick="calc.func('floor')">⌊x⌋</button><button class="btn" onclick="calc.digit('1')">1</button><button class="btn" onclick="calc.digit('2')">2</button>
+            <button class="btn fn" onclick="calc.negate()">±</button><button class="btn" onclick="calc.digit('0')">0</button>
+            <button class="btn" onclick="calc.dot()">.</button><button class="btn" onclick="calc.digit('3')">3</button><button class="btn eq" onclick="calc.equals()">=</button>
+        </div>
+    </div>
+
+    <!-- Graph -->
+    <div id="graph" class="panel">
+        <div class="graph-controls">
+            <input id="graphFunc" type="text" placeholder="f(x) = sin(x)" value="sin(x)">
+            <div class="graph-input-row"><input id="xMin" type="number" value="-10"><input id="xMax" type="number" value="10"></div>
+            <button class="graph-btn" onclick="graphView.syncFromInputs();drawGraph()">绘制图像</button>
+            <div style="display:flex;gap:8px;margin-top:8px">
+                <button class="graph-ctrl-btn" onclick="graphZoom(1.5)">+ 放大</button>
+                <button class="graph-ctrl-btn" onclick="graphZoom(0.67)">- 缩小</button>
+                <button class="graph-ctrl-btn" onclick="graphReset()">重置</button>
+            </div>
+        </div>
+        <div class="graph-area">
+            <canvas id="graphCanvas"></canvas>
+            <div class="graph-info" id="graphInfo">滚轮缩放 | 拖拽平移 | 双击重置</div>
+        </div>
+    </div>
+
+    <!-- Equation -->
+    <div id="equation" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setEqType('linear',this)">一元一次</button><button onclick="setEqType('quadratic',this)">一元二次</button><button onclick="setEqType('system',this)">二元一次</button></div>
+        <div id="eqInputs"></div>
+        <button class="action-btn" onclick="solveEquation()">求解</button>
+        <div class="eq-result" id="eqResult">输入系数后点击求解</div>
+    </div>
+
+    <!-- Converter -->
+    <div id="converter" class="panel conv-panel">
+        <div class="conv-category" id="convCats"></div>
+        <div class="conv-row"><label>从</label><div class="conv-input-row"><input id="convFrom" type="number" value="1" oninput="doConvert()"><select id="convFromUnit" onchange="doConvert()"></select></div></div>
+        <div class="conv-swap"><button onclick="swapConv()">⇅</button></div>
+        <div class="conv-row"><label>到</label><div class="conv-input-row"><input id="convTo" type="text" readonly class="conv-result-input"><select id="convToUnit" onchange="doConvert()"></select></div></div>
+    </div>
+
+    <!-- Matrix -->
+    <div id="matrix" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setMatrixOp('add',this)">加法</button><button onclick="setMatrixOp('subtract',this)">减法</button><button onclick="setMatrixOp('multiply',this)">乘法</button><button onclick="setMatrixOp('determinant',this)">行列式</button><button onclick="setMatrixOp('inverse',this)">逆矩阵</button></div>
+        <div id="matrixInputs"></div>
+        <button class="action-btn" onclick="calculateMatrix()">计算</button>
+        <div class="eq-result" id="matrixResult">选择运算类型并输入矩阵</div>
+    </div>
+
+    <!-- Geometry with Canvas -->
+    <div id="geometry" class="panel eq-panel">
+        <div class="eq-type">
+            <button class="active" onclick="setGeometryType('circle',this)">圆</button>
+            <button onclick="setGeometryType('triangle',this)">三角形</button>
+            <button onclick="setGeometryType('rectangle',this)">矩形</button>
+            <button onclick="setGeometryType('ellipse',this)">椭圆</button>
+            <button onclick="setGeometryType('trapezoid',this)">梯形</button>
+            <button onclick="setGeometryType('polygon',this)">正多边形</button>
+            <button onclick="setGeometryType('sphere',this)">球体</button>
+            <button onclick="setGeometryType('cylinder',this)">圆柱体</button>
+            <button onclick="setGeometryType('cone',this)">圆锥体</button>
+            <button onclick="setGeometryType('torus',this)">圆环体</button>
+        </div>
+        <div id="geometryInputs"></div>
+        <div class="canvas-container"><div class="canvas-label">几何图形可视化</div><canvas id="geometryCanvas" height="260"></canvas></div>
+        <button class="action-btn" onclick="calculateGeometry()">计算</button>
+        <div class="eq-result" id="geometryResult">选择几何图形并输入参数</div>
+    </div>
+
+    <!-- 3D with Three.js -->
+    <div id="3d" class="panel eq-panel">
+        <div class="eq-type" id="threeDTypeButtons">
+            <button class="active" data-3dtype="surface">3D曲面</button>
+            <button data-3dtype="vector">向量运算</button>
+            <button data-3dtype="distance">两点距离</button>
+            <button data-3dtype="plane">平面方程</button>
+            <button data-3dtype="line">直线方程</button>
+            <button data-3dtype="curve3d">参数曲线</button>
+        </div>
+        <div id="3dInputs"></div>
+        <div class="canvas-container" style="min-height:360px">
+            <div class="canvas-label">3D 可视化 (鼠标拖拽旋转，滚轮缩放)</div>
+            <canvas id="threeDCanvas" height="360"></canvas>
+        </div>
+        <button class="action-btn" onclick="calculate3D()">计算</button>
+        <div class="eq-result" id="3dResult">输入函数表达式，支持如 sin(x)*cos(y), x^2+y^2 等</div>
+    </div>
+
+    <!-- Calculus -->
+    <div id="calculus" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setCalculusType('derivative',this)">导数</button><button onclick="setCalculusType('integral',this)">积分</button><button onclick="setCalculusType('limit',this)">极限</button><button onclick="setCalculusType('series',this)">级数</button><button onclick="setCalculusType('taylor',this)">泰勒展开</button></div>
+        <div id="calculusInputs"></div>
+        <button class="action-btn" onclick="calculateCalculus()">计算</button>
+        <div class="eq-result" id="calculusResult">选择微积分运算类型并输入参数</div>
+    </div>
+
+    <!-- Statistics -->
+    <div id="statistics" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setStatType('combination',this)">组合</button><button onclick="setStatType('permutation',this)">排列</button><button onclick="setStatType('descriptive',this)">描述统计</button><button onclick="setStatType('binomial',this)">二项分布</button><button onclick="setStatType('normal',this)">正态分布</button><button onclick="setStatType('poisson',this)">泊松分布</button></div>
+        <div id="statInputs"></div>
+        <button class="action-btn" onclick="calculateStat()">计算</button>
+        <div class="eq-result" id="statResult">选择概率统计运算类型并输入参数</div>
+    </div>
+
+    <!-- Number Theory -->
+    <div id="numbertheory" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setNumTheoryType('prime',this)">素数检测</button><button onclick="setNumTheoryType('primeFactor',this)">素因数分解</button><button onclick="setNumTheoryType('gcd',this)">GCD/LCM</button><button onclick="setNumTheoryType('modpow',this)">模幂运算</button><button onclick="setNumTheoryType('euler',this)">欧拉函数</button><button onclick="setNumTheoryType('fibonacci',this)">斐波那契</button></div>
+        <div id="numTheoryInputs"></div>
+        <button class="action-btn" onclick="calculateNumTheory()">计算</button>
+        <div class="eq-result" id="numTheoryResult">选择数论运算类型并输入参数</div>
+    </div>
+
+    <!-- Algebra -->
+    <div id="algebra" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setAlgebraType('cubic',this)">三次方程</button><button onclick="setAlgebraType('polynomial',this)">多项式运算</button><button onclick="setAlgebraType('set',this)">集合运算</button><button onclick="setAlgebraType('logic',this)">逻辑运算</button><button onclick="setAlgebraType('sequence',this)">数列求和</button></div>
+        <div id="algebraInputs"></div>
+        <button class="action-btn" onclick="calculateAlgebra()">计算</button>
+        <div class="eq-result" id="algebraResult">选择代数运算类型并输入参数</div>
+    </div>
+
+    <!-- Applied Math -->
+    <div id="appliedmath" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setAppliedType('newton',this)">牛顿法</button><button onclick="setAppliedType('regression',this)">线性回归</button><button onclick="setAppliedType('interpolation',this)">拉格朗日插值</button><button onclick="setAppliedType('numericalIntegral',this)">数值积分</button><button onclick="setAppliedType('ode',this)">微分方程</button></div>
+        <div id="appliedInputs"></div>
+        <button class="action-btn" onclick="calculateApplied()">计算</button>
+        <div class="eq-result" id="appliedResult">选择应用数学运算类型并输入参数</div>
+    </div>
+
+    <!-- Fun - with improved relative calculator -->
+    <div id="fun" class="panel eq-panel">
+        <div class="eq-type"><button class="active" onclick="setFunType('relative',this)">亲戚计算</button><button onclick="setFunType('loan',this)">房贷车贷</button><button onclick="setFunType('interest',this)">年化收益</button><button onclick="setFunType('currency',this)">汇率计算</button><button onclick="setFunType('number',this)">大写数字</button><button onclick="setFunType('base',this)">进制计算</button><button onclick="setFunType('speed',this)">速度计算</button><button onclick="setFunType('bmi',this)">BMI计算</button><button onclick="setFunType('tax',this)">个税计算</button></div>
+        <div id="funInputs"></div>
+        <button class="action-btn" onclick="calculateFun()">计算</button>
+        <div class="eq-result" id="funResult">选择计算类型并输入参数</div>
+    </div>
+
+    <!-- History -->
+    <div id="history" class="panel history-panel">
+        <div id="historyList" class="history-empty">暂无计算记录</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/examples/js/controls/OrbitControls.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

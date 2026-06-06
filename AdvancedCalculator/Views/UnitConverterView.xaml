@@ -1,0 +1,66 @@
+<UserControl x:Class="AdvancedCalculator.Views.UnitConverterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Category Selector -->
+        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" CornerRadius="12" Padding="10" Margin="0,0,0,8">
+            <WrapPanel HorizontalAlignment="Center">
+                <RadioButton Content="长度" IsChecked="True" Checked="Category_Changed" Tag="Length" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="重量" Checked="Category_Changed" Tag="Weight" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="温度" Checked="Category_Changed" Tag="Temp" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="面积" Checked="Category_Changed" Tag="Area" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="体积" Checked="Category_Changed" Tag="Volume" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="速度" Checked="Category_Changed" Tag="Speed" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="数据" Checked="Category_Changed" Tag="Data" Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,12,0" />
+                <RadioButton Content="进制" Checked="Category_Changed" Tag="Base" Foreground="{StaticResource TextPrimaryBrush}" />
+            </WrapPanel>
+        </Border>
+
+        <!-- Converter -->
+        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}" CornerRadius="12" Padding="16" Margin="0,0,0,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="从" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,4" />
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,0,0,10">
+                    <TextBox x:Name="FromValue" Text="1" Width="180" Background="{StaticResource CardBrush}" 
+                             Foreground="{StaticResource TextPrimaryBrush}" Padding="8,6" FontSize="18"
+                             VerticalContentAlignment="Center" TextChanged="Value_Changed" />
+                    <ComboBox x:Name="FromUnit" Width="100" Margin="10,0,0,0" FontSize="14"
+                              SelectionChanged="Unit_Changed" />
+                </StackPanel>
+
+                <!-- Swap Button -->
+                <Button Grid.Row="2" Content="⇅ 交换" Style="{StaticResource OperatorButton}" 
+                        Click="Swap_Click" Width="100" Height="36" HorizontalAlignment="Center" Margin="0,0,0,10" />
+
+                <TextBlock Grid.Row="3" Text="到" Foreground="{StaticResource TextSecondaryBrush}" FontSize="13" Margin="0,0,0,4" />
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <TextBox x:Name="ToValue" IsReadOnly="True" Width="180" Background="{StaticResource CardBrush}" 
+                             Foreground="{StaticResource AccentGreenBrush}" Padding="8,6" FontSize="18"
+                             VerticalContentAlignment="Center" FontWeight="Bold" />
+                    <ComboBox x:Name="ToUnit" Width="100" Margin="10,0,0,0" FontSize="14"
+                              SelectionChanged="Unit_Changed" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Additional Info -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" CornerRadius="12" Padding="16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="InfoText" Text="选择类别和单位进行转换" 
+                           Foreground="{StaticResource TextSecondaryBrush}" FontSize="14"
+                           TextWrapping="Wrap" />
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

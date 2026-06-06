@@ -1,0 +1,3 @@
+@echo off
+echo Opening User Guide...
+start "" "%~dp0使用指南.txt"

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>趣味计算功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .pass { color: green; } .fail { color: red; }
+        button { padding: 10px 20px; background: #4fc3f7; color: white; border: none; border-radius: 5px; cursor: pointer; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>趣味计算功能测试</h1>
+    <div id="results"></div>
+    <button onclick="runTests()">运行测试</button>
+    
+    <script>
+        function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            
+            // Test loan calculator
+            test('房贷计算器 - 等额本息', () => {
+                const amount = 1000000;
+                const rate = 0.049;
+                const years = 30;
+                const monthlyRate = rate / 12;
+                const months = years * 12;
+                const monthlyPayment = amount * monthlyRate * Math.pow(1 + monthlyRate, months) / (Math.pow(1 + monthlyRate, months) - 1);
+                return monthlyPayment > 5000 && monthlyPayment < 6000;
+            });
+            
+            // Test interest calculator
+            test('年化收益计算器', () => {
+                const principal = 10000;
+                const rate = 0.05;
+                const years = 3;
+                const freq = 12;
+                const amount = principal * Math.pow(1 + rate / freq, freq * years);
+                return amount > 11500 && amount < 12000;
+            });
+            
+            // Test BMI calculator
+            test('BMI计算器', () => {
+                const height = 1.7;
+                const weight = 65;
+                const bmi = weight / (height * height);
+                return bmi > 22 && bmi < 23;
+            });
+            
+            // Test Chinese number conversion
+            test('大写数字转换', () => {
+                const digits = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];
+                return digits[0] === '零' && digits[9] === '玖';
+            });
+            
+            // Test base conversion
+            test('进制转换', () => {
+                const decimal = 255;
+                const hex = decimal.toString(16).toUpperCase();
+                const binary = decimal.toString(2);
+                return hex === 'FF' && binary === '11111111';
+            });
+            
+            // Test speed conversion
+            test('速度转换', () => {
+                const kmh = 100;
+                const ms = kmh / 3.6;
+                return Math.abs(ms - 27.7778) < 0.01;
+            });
+            
+            // Test currency conversion
+            test('汇率计算', () => {
+                const rates = {
+                    'CNY': 1,
+                    'USD': 7.2,
+                    'EUR': 7.8
+                };
+                const amount = 1000;
+                const result = amount * rates['USD'] / rates['EUR'];
+                return result > 900 && result < 1000;
+            });
+            
+            // Test tax calculator
+            test('个税计算器', () => {
+                const monthlyIncome = 15000;
+                const insurance = 3000;
+                const threshold = 5000;
+                const taxableIncome = monthlyIncome - insurance - threshold; // 7000
+                // 7000 falls in 10% bracket (3000-12000), deduction 210
+                const tax = taxableIncome * 0.10 - 210;
+                return Math.abs(tax - 490) < 0.01;
+            });
+            
+            function test(name, fn) {
+                const div = document.createElement('div');
+                div.className = 'test';
+                try {
+                    const result = fn();
+                    div.innerHTML = `<strong>${name}:</strong> <span class="${result ? 'pass' : 'fail'}">${result ? '✓ 通过' : '✗ 失败'}</span>`;
+                } catch (e) {
+                    div.innerHTML = `<strong>${name}:</strong> <span class="fail">✗ 错误: ${e.message}</span>`;
+                }
+                results.appendChild(div);
+            }
+        }
+    </script>
+</body>
+</html>

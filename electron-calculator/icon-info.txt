@@ -1,0 +1,30 @@
+应用图标说明
+============
+
+为了构建完整的应用，需要准备应用图标文件：
+
+1. 图标格式要求：
+   - Windows: .ico 格式 (256x256 像素)
+   - macOS: .icns 格式 (512x512 像素)
+   - Linux: .png 格式 (512x512 像素)
+
+2. 推荐图标设计：
+   - 使用计算器相关的符号 (∑, +, -, ×, ÷)
+   - 使用深色背景 (#1a1a2e)
+   - 使用亮色符号 (#4fc3f7)
+   - 圆角矩形设计
+
+3. 临时解决方案：
+   如果没有图标文件，可以：
+   - 删除 package.json 中的 icon 配置
+   - 或者使用在线图标生成器创建图标
+
+4. 在线图标生成工具：
+   - https://iconverticons.com/
+   - https://www.icoconvert.com/
+   - https://convertico.com/
+
+5. 将生成的图标文件放在项目根目录，命名为：
+   - icon.ico (Windows)
+   - icon.icns (macOS)
+   - icon.png (Linux)

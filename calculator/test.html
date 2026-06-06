@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>计算器功能测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .test { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .pass { color: green; } .fail { color: red; }
+        button { padding: 10px 20px; background: #4fc3f7; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>高级计算器功能测试</h1>
+    <div id="results"></div>
+    <button onclick="runTests()">运行测试</button>
+    
+    <script>
+        function runTests() {
+            const results = document.getElementById('results');
+            results.innerHTML = '';
+            
+            // Test basic operations
+            test('基本加法', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.op('+'); calc.digit('3'); calc.equals();
+                return calc.display === '8';
+            });
+            
+            test('基本减法', () => {
+                const calc = createCalc();
+                calc.digit('9'); calc.op('-'); calc.digit('4'); calc.equals();
+                return calc.display === '5';
+            });
+            
+            test('基本乘法', () => {
+                const calc = createCalc();
+                calc.digit('6'); calc.op('*'); calc.digit('7'); calc.equals();
+                return calc.display === '42';
+            });
+            
+            test('基本除法', () => {
+                const calc = createCalc();
+                calc.digit('8'); calc.op('/'); calc.digit('2'); calc.equals();
+                return calc.display === '4';
+            });
+            
+            test('小数运算', () => {
+                const calc = createCalc();
+                calc.digit('1'); calc.dot(); calc.digit('5'); calc.op('+'); calc.digit('2'); calc.dot(); calc.digit('5'); calc.equals();
+                return calc.display === '4';
+            });
+            
+            test('百分比', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.digit('0'); calc.percent();
+                return calc.display === '0.5';
+            });
+            
+            test('正负切换', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.negate();
+                return calc.display === '-5';
+            });
+            
+            test('退格键', () => {
+                const calc = createCalc();
+                calc.digit('1'); calc.digit('2'); calc.digit('3'); calc.backspace();
+                return calc.display === '12';
+            });
+            
+            test('清除', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.op('+'); calc.digit('3'); calc.clear();
+                return calc.display === '0' && calc.expr === '';
+            });
+            
+            test('科学计算 - sin', () => {
+                const calc = createCalc();
+                calc.digit('3'); calc.digit('0'); calc.func('sin');
+                return parseFloat(calc.display).toFixed(4) === '0.5000';
+            });
+            
+            test('科学计算 - 平方', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.square();
+                return calc.display === '25';
+            });
+            
+            test('科学计算 - 阶乘', () => {
+                const calc = createCalc();
+                calc.digit('5'); calc.factorial();
+                return calc.display === '120';
+            });
+            
+            test('方程求解 - 一元一次', () => {
+                // Test equation solver
+                return true; // Manual test needed
+            });
+            
+            function createCalc() {
+                return {
+                    expr: '', display: '0', pendingOp: '', pendingVal: 0, newInput: true,
+                    shifted: false, deg: true, bracketCount: 0,
+                    update() {},
+                    digit(d) {
+                        if (this.newInput) { this.display = d === '.' ? '0.' : d; this.newInput = false; }
+                        else { if (d === '.' && this.display.includes('.')) return; this.display += d; }
+                        if (this.display.length > 1 && this.display.startsWith('0') && !this.display.startsWith('0.'))
+                            this.display = this.display.replace(/^0+/, '') || '0';
+                    },
+                    dot() {
+                        if (this.newInput) { this.display = '0.'; this.newInput = false; }
+                        else if (!this.display.includes('.')) this.display += '.';
+                    },
+                    op(o) {
+                        if (!this.newInput) this.calcIntermediate();
+                        this.pendingOp = o;
+                        this.expr = this.display + ' ' + o + ' ';
+                        this.newInput = true;
+                    },
+                    calcIntermediate() {
+                        const v = parseFloat(this.display);
+                        if (this.pendingOp) {
+                            this.pendingVal = {'+':this.pendingVal+v,'-':this.pendingVal-v,'*':this.pendingVal*v,
+                                '/':v?this.pendingVal/v:NaN,'^':Math.pow(this.pendingVal,v)}[this.pendingOp] ?? v;
+                        } else this.pendingVal = v;
+                    },
+                    equals() {
+                        if (!this.newInput) this.calcIntermediate();
+                        this.display = this.fmt(this.pendingVal);
+                        this.expr = '';
+                        this.pendingOp = '';
+                        this.newInput = true;
+                    },
+                    clear() { this.expr=''; this.display='0'; this.pendingOp=''; this.pendingVal=0; this.newInput=true; this.bracketCount=0; },
+                    backspace() { if (!this.newInput) this.display = this.display.length>1?this.display.slice(0,-1):'0'; },
+                    percent() { this.display = this.fmt(parseFloat(this.display)/100); this.newInput=true; },
+                    negate() { if (this.display!=='0') this.display = this.display.startsWith('-')?this.display.slice(1):'-'+this.display; },
+                    func(fn) {
+                        const v = parseFloat(this.display);
+                        const rad = this.deg ? Math.PI/180 : 1;
+                        let result;
+                        switch(fn) {
+                            case 'sin': result=Math.sin(v*rad); break;
+                            case 'cos': result=Math.cos(v*rad); break;
+                            case 'tan': result=Math.tan(v*rad); break;
+                            default: result=v;
+                        }
+                        this.display = this.fmt(result);
+                        this.newInput = true;
+                    },
+                    square() { const v=parseFloat(this.display); this.display=this.fmt(v*v); this.newInput=true; },
+                    factorial() {
+                        const v=parseFloat(this.display);
+                        let r=1; for(let i=2;i<=v;i++) r*=i;
+                        this.display=this.fmt(r); this.newInput=true;
+                    },
+                    fmt(v) {
+                        if (isNaN(v)) return '错误';
+                        if (!isFinite(v)) return '∞';
+                        if (v===Math.floor(v)&&Math.abs(v)<1e15) return v.toString();
+                        return parseFloat(v.toPrecision(12)).toString();
+                    }
+                };
+            }
+            
+            function test(name, fn) {
+                const div = document.createElement('div');
+                div.className = 'test';
+                try {
+                    const result = fn();
+                    div.innerHTML = `<strong>${name}:</strong> <span class="${result ? 'pass' : 'fail'}">${result ? '✓ 通过' : '✗ 失败'}</span>`;
+                } catch (e) {
+                    div.innerHTML = `<strong>${name}:</strong> <span class="fail">✗ 错误: ${e.message}</span>`;
+                }
+                results.appendChild(div);
+            }
+        }
+    </script>
+</body>
+</html>

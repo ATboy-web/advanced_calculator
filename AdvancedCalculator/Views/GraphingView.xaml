@@ -1,0 +1,55 @@
+<UserControl x:Class="AdvancedCalculator.Views.GraphingView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             Background="{StaticResource BackgroundBrush}">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <!-- Function Input -->
+        <Border Grid.Row="0" Background="{StaticResource SurfaceBrush}" CornerRadius="12" Padding="12" Margin="0,0,0,8">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="f(x) =" Foreground="{StaticResource PrimaryBrush}" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,8,6" />
+                <TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="3" x:Name="FuncInput" Text="sin(x)"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                         BorderBrush="{StaticResource PrimaryBrush}" BorderThickness="1" Padding="8,6"
+                         FontSize="16" VerticalContentAlignment="Center" />
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="X:" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,4,6" />
+                <TextBox Grid.Row="1" Grid.Column="1" x:Name="XMinInput" Text="-10"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                         BorderThickness="1" Padding="6,4" FontSize="13" />
+                <TextBox Grid.Row="1" Grid.Column="3" x:Name="XMaxInput" Text="10"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                         BorderThickness="1" Padding="6,4" FontSize="13" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Y:" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" Margin="0,0,4,0" />
+                <TextBox Grid.Row="2" Grid.Column="1" x:Name="YMinInput" Text="-5"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                         BorderThickness="1" Padding="6,4" FontSize="13" />
+                <TextBox Grid.Row="2" Grid.Column="3" x:Name="YMaxInput" Text="5"
+                         Background="{StaticResource CardBrush}" Foreground="{StaticResource TextPrimaryBrush}"
+                         BorderThickness="1" Padding="6,4" FontSize="13" />
+            </Grid>
+        </Border>
+
+        <!-- Plot Button -->
+        <Button Grid.Row="1" Content="绘制函数图像" Style="{StaticResource EqualButton}" 
+                Click="Plot_Click" Margin="0,0,0,8" Height="40" />
+
+        <!-- Canvas for Graph -->
+        <Border Grid.Row="2" Background="{StaticResource SurfaceBrush}" CornerRadius="12">
+            <Canvas x:Name="GraphCanvas" ClipToBounds="True" />
+        </Border>
+    </Grid>
+</UserControl>
