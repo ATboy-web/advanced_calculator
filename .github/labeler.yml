@@ -1,0 +1,45 @@
+# Label configuration for PR labeler
+
+# Electron app changes
+electron:
+  - changed-files:
+    - any-glob-to-any-file: 'electron-calculator/**'
+
+# Android app changes
+android:
+  - changed-files:
+    - any-glob-to-any-file: 'android-apk/**'
+
+# Web calculator changes
+web:
+  - changed-files:
+    - any-glob-to-any-file: 'calculator/**'
+
+# Flutter app changes
+flutter:
+  - changed-files:
+    - any-glob-to-any-file: 'advanced_calculator/**'
+
+# Documentation changes
+documentation:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '*.md'
+      - 'docs/**'
+
+# CI/CD changes
+ci:
+  - changed-files:
+    - any-glob-to-any-file: '.github/**'
+
+# CSS/Style changes
+styles:
+  - changed-files:
+    - any-glob-to-any-file:
+      - '**/*.css'
+      - '**/*.scss'
+
+# JavaScript changes
+javascript:
+  - changed-files:
+    - any-glob-to-any-file: '**/*.js'

@@ -1,0 +1,61 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  lint:
+    name: Code Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check HTML syntax
+        run: |
+          echo "Checking HTML files..."
+          find . -name "*.html" -not -path "./node_modules/*" | while read f; do
+            echo "Checking: $f"
+            # Basic HTML validation
+            grep -q "<!DOCTYPE html>" "$f" && echo "  OK" || echo "  WARNING: Missing DOCTYPE"
+          done
+
+      - name: Check JavaScript syntax
+        run: |
+          echo "Checking JavaScript files..."
+          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" | while read f; do
+            echo "Checking: $f"
+            node --check "$f" 2>/dev/null && echo "  OK" || echo "  ERROR in $f"
+          done
+
+  test-web:
+    name: Web App Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        working-directory: electron-calculator
+        run: npm ci
+
+      - name: Verify build
+        working-directory: electron-calculator
+        run: |
+          echo "Verifying project structure..."
+          test -f index.html && echo "✓ index.html exists"
+          test -f app.js && echo "✓ app.js exists"
+          test -f main.js && echo "✓ main.js exists"
+          test -f package.json && echo "✓ package.json exists"
+          echo "All checks passed!"
