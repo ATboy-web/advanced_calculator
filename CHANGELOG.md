@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Probability tutorials: classical probability, conditional probability & Bayes' theorem
   - Linear Algebra tutorials: matrix multiplication
   - Trigonometry tutorials: trigonometric identities
-- **Multi-language Support (i18n)** - Full interface in Chinese, English, and Japanese
+- **Multi-language Support (i18n)** - Full interface in Chinese, English, Hindi, and Spanish
   - Language selector in header with dropdown menu
   - Language preference saved to localStorage
   - All UI labels, buttons, and tutorial content translated

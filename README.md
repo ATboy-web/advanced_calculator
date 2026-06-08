@@ -7,7 +7,7 @@
 
 > 一款功能强大的跨平台科学计算器，支持 15+ 计算模块、3D 可视化、数学教程和多语言界面。
 
-[English](#english) | [日本語](#日本語)
+[English](#english) | [हिन्दी](#हिन्दी) | [Español](#español)
 
 ---
 
@@ -35,7 +35,7 @@
 
 ### 核心特性
 
-- **多语言支持 (i18n)** - 中文 / English / 日本語 三语切换
+- **多语言支持 (i18n)** - 中文 / English / हिन्दी / Español 四语切换
 - **数学教程系统** - 基于 MathWorld 百科的交互式学习教程
 - **3D 可视化** - Three.js 驱动的 3D 曲面和几何体渲染
 - **改进的输入标签** - 每个输入框都有清晰的参数说明
@@ -192,7 +192,7 @@ chore: 构建/工具
 
 ### v2.1.0 (2026-06-08)
 - **数学教程系统** - 6大分类(代数/微积分/几何/概率/线性代数/三角函数)的交互式学习教程
-- **多语言支持** - 中文/English/日本語 三语界面切换
+- **多语言支持** - 中文/English/हिन्दी/Español 四语界面切换
 - **输入标签优化** - 所有计算器面板添加参数说明，降低使用门槛
 - **基于 MathWorld** - 教程内容参考 mathworld.net.cn 数学百科
 
@@ -256,7 +256,7 @@ chore: 构建/工具
 - **15 Calculator Modules** - Basic, Scientific, Graphing, Equation, Matrix, Geometry, 3D, Calculus, Statistics, Number Theory, Algebra, Applied Math, Fun, Converter, Tutorial
 - **3D Visualization** - Interactive 3D surfaces with Three.js
 - **Math Tutorials** - Learn algebra, calculus, geometry, probability, linear algebra, and trigonometry interactively
-- **Multi-language** - Chinese, English, Japanese interface
+- **Multi-language** - Chinese, English, Hindi, Spanish interface
 - **Cross-platform** - Electron (Windows/Mac/Linux) + Android APK
 
 ### Quick Start
@@ -268,16 +268,34 @@ npm install && npm start
 
 ---
 
-<a name="日本語"></a>
-## 日本語
+<a name="हिन्दी"></a>
+## हिन्दी (Hindi)
 
-### 機能
-- **15の計算モジュール** - 基本、科学、グラフ、方程式、行列、幾何学、3D、微積分、統計、数論、代数、応用数学、エンターテイメント、変換、チュートリアル
-- **3D可視化** - Three.jsによるインタラクティブ3Dサーフェス
-- **数学チュートリアル** - 代数、微積分、幾何学、確率、線形代数、三角関数をインタラクティブに学習
-- **多言語対応** - 中国語、英語、日本語インターフェース
+### विशेषताएं
+- **15 कैलकुलेटर मॉड्यूल** - बेसिक, वैज्ञानिक, ग्राफ़, समीकरण, मैट्रिक्स, ज्यामिति, 3D, कैलकुलस, सांख्यिकी, संख्या सिद्धांत, बीजगणित, अनुप्रयुक्त गणित, मज़ेदार, कनवर्टर, ट्यूटोरियल
+- **3D विज़ुअलाइज़ेशन** - Three.js द्वारा इंटरैक्टिव 3D सतह
+- **गणित ट्यूटोरियल** - बीजगणित, कैलकुलस, ज्यामिति, प्रायिकता, रैखिक बीजगणित, त्रिकोणमिति इंटरैक्टिव रूप से सीखें
+- **बहुभाषी** - चीनी, अंग्रेजी, हिन्दी, स्पेनिश इंटरफ़ेस
 
-### クイックスタート
+### त्वरित शुरुआत
+```bash
+git clone https://github.com/ATboy-web/advanced_calculator.git
+cd advanced_calculator/electron-calculator
+npm install && npm start
+```
+
+---
+
+<a name="español"></a>
+## Español (Spanish)
+
+### Características
+- **15 Módulos de Cálculo** - Básico, Científico, Gráfico, Ecuación, Matriz, Geometría, 3D, Cálculo, Estadística, Teoría de Números, Álgebra, Matemáticas Aplicadas, Divertido, Convertidor, Tutorial
+- **Visualización 3D** - Superficies 3D interactivas con Three.js
+- **Tutoriales de Matemáticas** - Aprende álgebra, cálculo, geometría, probabilidad, álgebra lineal y trigonometría de forma interactiva
+- **Multilingüe** - Interfaz en chino, inglés, hindi y español
+
+### Inicio Rápido
 ```bash
 git clone https://github.com/ATboy-web/advanced_calculator.git
 cd advanced_calculator/electron-calculator

@@ -91,7 +91,7 @@ jobs:
             - 15 Calculator Modules (Basic, Scientific, Graphing, Equation, Matrix, Geometry, 3D, Calculus, Statistics, Number Theory, Algebra, Applied Math, Fun, Converter, Tutorial)
             - 3D Visualization (Three.js)
             - Math Tutorials (Algebra, Calculus, Geometry, Probability, Linear Algebra, Trigonometry)
-            - Multi-language Support (中文/English/日本語)
+            - Multi-language Support (中文/English/हिन्दी/Español)
             - Improved Input Labels with Descriptions
             - Unit Converter (8 categories)
           files: |

@@ -73,7 +73,7 @@ const i18n = {
             input: '输入', result: '结果', error: '错误', formula: '公式',
             step: '步骤', example: '示例', explanation: '说明', practice: '练习',
             // Language
-            lang: '语言', langZh: '中文', langEn: 'English', langJa: '日本語',
+            lang: '语言', langZh: '中文', langEn: 'English', langHi: 'हिन्दी', langEs: 'Español',
         },
         en: {
             // Header
@@ -140,17 +140,17 @@ const i18n = {
             input: 'Input', result: 'Result', error: 'Error', formula: 'Formula',
             step: 'Step', example: 'Example', explanation: 'Explanation', practice: 'Practice',
             // Language
-            lang: 'Language', langZh: '中文', langEn: 'English', langJa: '日本語',
+            lang: 'Language', langZh: '中文', langEn: 'English', langHi: 'हिन्दी', langEs: 'Español',
         },
-        ja: {
+        hi: {
             // Header
-            title: '高度電卓', mode: 'DEG',
+            title: 'उन्नत कैलकुलेटर', mode: 'DEG',
             // Navigation tabs
-            basic: '基本', scientific: '科学', graph: 'グラフ', equation: '方程式',
-            matrix: '行列', geometry: '幾何', '3d': '3D', calculus: '微積分',
-            statistics: '統計', numbertheory: '数論', algebra: '代数',
-            appliedmath: '応用数学', fun: 'ファン', converter: '変換', history: '履歴',
-            tutorial: 'チュートリアル',
+            basic: 'बेसिक', scientific: 'वैज्ञानिक', graph: 'ग्राफ़', equation: 'समीकरण',
+            matrix: 'मैट्रिक्स', geometry: 'ज्यामिति', '3d': '3D', calculus: 'कैलकुलस',
+            statistics: 'सांख्यिकी', numbertheory: 'संख्या सिद्धांत', algebra: 'बीजगणित',
+            appliedmath: 'अनुप्रयुक्त गणित', fun: 'मज़ेदार', converter: 'कनवर्टर', history: 'इतिहास',
+            tutorial: 'ट्यूटोरियल',
             // Basic calculator
             clear: 'AC', backspace: '⌫', percent: '%', divide: '÷', multiply: '×',
             subtract: '−', add: '+', negate: '±', equals: '=', decimal: '.',
@@ -159,55 +159,122 @@ const i18n = {
             sqrt: '√', square: 'x²', power: 'x^y', reciprocal: '1/x', abs: '|x|',
             factorial: 'n!', exp: 'eˣ', ceil: '⌈x⌉', floor: '⌊x⌋',
             // Graph
-            graphFunc: 'f(x) = sin(x)', plotBtn: 'グラフ描画', zoomIn: '+ 拡大',
-            zoomOut: '- 縮小', reset: 'リセット', graphHelp: 'スクロールで拡大 | ドラッグで移動 | ダブルクリックでリセット',
+            graphFunc: 'f(x) = sin(x)', plotBtn: 'ग्राफ़ बनाएं', zoomIn: '+ ज़ूम इन',
+            zoomOut: '- ज़ूम आउट', reset: 'रीसेट', graphHelp: 'ज़ूम करें | खींचें | डबल-क्लिक रीसेट',
             // Equation
-            linear: '一次方程式', quadratic: '二次方程式', system: '連立方程式', solve: '求解',
-            eqResult: '係数を入力して求解をクリック',
+            linear: 'रैखिक', quadratic: 'द्विघात', system: 'द्वि-समीकरण', solve: 'हल करें',
+            eqResult: 'गुणांक दर्ज करें और हल पर क्लिक करें',
             // Matrix
-            add: '加算', subtract: '減算', multiply: '乗算', determinant: '行列式',
-            inverse: '逆行列', calculate: '計算',
+            add: 'जोड़', subtract: 'घटाव', multiply: 'गुणन', determinant: 'विनिर्धारक',
+            inverse: 'व्युत्क्रम', calculate: 'गणना',
             // Geometry
-            circle: '円', triangle: '三角形', rectangle: '長方形', ellipse: '楕円',
-            trapezoid: '台形', polygon: '正多角形', sphere: '球', cylinder: '円柱',
-            cone: '円錐', torus: 'トーラス',
+            circle: 'वृत्त', triangle: 'त्रिभुज', rectangle: 'आयत', ellipse: 'दीर्घवृत्त',
+            trapezoid: 'समलंब', polygon: 'बहुभुज', sphere: 'गोला', cylinder: 'बेलन',
+            cone: 'शंकु', torus: 'टोरस',
             // 3D
-            surface: '3D曲面', vector: 'ベクトル', distance: '距離',
-            plane: '平面', line: '直線', curve3d: 'パラメトリック曲線',
+            surface: '3D सतह', vector: 'सदिश', distance: 'दूरी',
+            plane: 'समतल', line: 'रेखा', curve3d: 'पैरामेट्रिक वक्र',
             // Calculus
-            derivative: '微分', integral: '積分', limit: '極限', series: '級数',
-            taylor: 'テイラー展開',
+            derivative: 'अवकलज', integral: 'समाकलन', limit: 'सीमा', series: 'श्रेणी',
+            taylor: 'टेलर विस्तार',
             // Statistics
-            combination: '組合せ', permutation: '順列', descriptive: '記述統計',
-            binomial: '二項分布', normal: '正規分布', poisson: 'ポアソン分布',
+            combination: 'संयोजन', permutation: 'क्रमचय', descriptive: 'वर्णनात्मक',
+            binomial: 'द्विपद', normal: 'सामान्य', poisson: 'प्वासों',
             // Number Theory
-            prime: '素数判定', primeFactor: '素因数分解', gcd: 'GCD/LCM',
-            modpow: 'べき剰余', euler: 'オイラーφ', fibonacci: 'フィボナッチ',
+            prime: 'अभाज्य परीक्षण', primeFactor: 'अभाज्य गुणनखंड', gcd: 'GCD/LCM',
+            modpow: 'मॉडपाव', euler: 'ऑयलर φ', fibonacci: 'फिबोनाची',
             // Algebra
-            cubic: '三次方程式', polynomial: '多項式', set: '集合演算',
-            logic: '論理演算', sequence: '数列',
+            cubic: 'घन समीकरण', polynomial: 'बहुपद', set: 'समुच्चय',
+            logic: 'तर्क', sequence: 'श्रृंखला',
             // Applied Math
-            newton: 'ニュートン法', regression: '線形回帰', interpolation: 'ラグランジュ',
-            numericalIntegral: '数値積分', ode: '微分方程式',
+            newton: 'न्यूटन विधि', regression: 'रैखिक प्रतिगमन', interpolation: 'लैग्रेंज',
+            numericalIntegral: 'संख्यात्मक समाकलन', ode: 'अवकल समीकरण',
             // Fun
-            relative: '親戚計算', loan: 'ローン', interest: '利息',
-            currency: '通貨', number: '大文字数字', base: '進数変換',
-            speed: '速度', bmi: 'BMI', tax: '税金',
+            relative: 'रिश्तेदार', loan: 'लोन', interest: 'ब्याज',
+            currency: 'मुद्रा', number: 'अंक रूपांतरण', base: 'आधार रूपांतरण',
+            speed: 'गति', bmi: 'BMI', tax: 'कर',
             // Converter
-            length: '長さ', weight: '重さ', temperature: '温度', area: '面積',
-            volume: '体積', dataSize: 'データ', from: 'から', to: 'まで',
+            length: 'लंबाई', weight: 'वज़न', temperature: 'तापमान', area: 'क्षेत्रफल',
+            volume: 'आयतन', dataSize: 'डेटा', from: 'से', to: 'तक',
             // History
-            noHistory: '計算履歴がありません',
+            noHistory: 'कोई गणना इतिहास नहीं',
             // Tutorial
-            tutorialTitle: '数学チュートリアル', tutorialDesc: 'MathWorld百科事典に基づくインタラクティブ学習',
-            algebraTutorial: '代数の基礎', calculusTutorial: '微積分の基礎',
-            geometryTutorial: '幾何学入門', probabilityTutorial: '確率の基礎',
-            linearAlgebraTutorial: '線形代数', trigonometryTutorial: '三角関数',
+            tutorialTitle: 'गणित ट्यूटोरियल', tutorialDesc: 'MathWorld विश्वकोश पर आधारित इंटरैक्टिव शिक्षण',
+            algebraTutorial: 'बीजगणित मूल', calculusTutorial: 'कैलकुलस मूल',
+            geometryTutorial: 'ज्यामिति परिचय', probabilityTutorial: 'प्रायिकता मूल',
+            linearAlgebraTutorial: 'रैखिक बीजगणित', trigonometryTutorial: 'त्रिकोणमिति',
             // Common
-            input: '入力', result: '結果', error: 'エラー', formula: '公式',
-            step: 'ステップ', example: '例', explanation: '説明', practice: '練習',
+            input: 'इनपुट', result: 'परिणाम', error: 'त्रुटि', formula: 'सूत्र',
+            step: 'चरण', example: 'उदाहरण', explanation: 'व्याख्या', practice: 'अभ्यास',
             // Language
-            lang: '言語', langZh: '中文', langEn: 'English', langJa: '日本語',
+            lang: 'भाषा', langZh: '中文', langEn: 'English', langHi: 'हिन्दी', langEs: 'Español',
+        },
+        es: {
+            // Header
+            title: 'Calculadora Avanzada', mode: 'DEG',
+            // Navigation tabs
+            basic: 'Básico', scientific: 'Científico', graph: 'Gráfico', equation: 'Ecuación',
+            matrix: 'Matriz', geometry: 'Geometría', '3d': '3D', calculus: 'Cálculo',
+            statistics: 'Estadística', numbertheory: 'Números', algebra: 'Álgebra',
+            appliedmath: 'Mat. Aplicadas', fun: 'Divertido', converter: 'Convertidor', history: 'Historial',
+            tutorial: 'Tutorial',
+            // Basic calculator
+            clear: 'AC', backspace: '⌫', percent: '%', divide: '÷', multiply: '×',
+            subtract: '−', add: '+', negate: '±', equals: '=', decimal: '.',
+            // Scientific calculator
+            shift: '2nd', sin: 'sin', cos: 'cos', tan: 'tan', ln: 'ln', log: 'log',
+            sqrt: '√', square: 'x²', power: 'x^y', reciprocal: '1/x', abs: '|x|',
+            factorial: 'n!', exp: 'eˣ', ceil: '⌈x⌉', floor: '⌊x⌋',
+            // Graph
+            graphFunc: 'f(x) = sin(x)', plotBtn: 'Trazar', zoomIn: '+ Ampliar',
+            zoomOut: '- Reducir', reset: 'Reiniciar', graphHelp: 'Rueda: zoom | Arrastrar | Doble clic: reiniciar',
+            // Equation
+            linear: 'Lineal', quadratic: 'Cuadrática', system: 'Sistema 2x2', solve: 'Resolver',
+            eqResult: 'Ingrese coeficientes y haga clic en Resolver',
+            // Matrix
+            add: 'Sumar', subtract: 'Restar', multiply: 'Multiplicar', determinant: 'Determinante',
+            inverse: 'Inversa', calculate: 'Calcular',
+            // Geometry
+            circle: 'Círculo', triangle: 'Triángulo', rectangle: 'Rectángulo', ellipse: 'Elipse',
+            trapezoid: 'Trapecio', polygon: 'Polígono', sphere: 'Esfera', cylinder: 'Cilindro',
+            cone: 'Cono', torus: 'Toro',
+            // 3D
+            surface: 'Superficie 3D', vector: 'Vector', distance: 'Distancia',
+            plane: 'Plano', line: 'Línea', curve3d: 'Curva Paramétrica',
+            // Calculus
+            derivative: 'Derivada', integral: 'Integral', limit: 'Límite', series: 'Serie',
+            taylor: 'Taylor',
+            // Statistics
+            combination: 'Combinación', permutation: 'Permutación', descriptive: 'Descriptiva',
+            binomial: 'Binomial', normal: 'Normal', poisson: 'Poisson',
+            // Number Theory
+            prime: 'Prueba Primo', primeFactor: 'Factores Primos', gcd: 'MCD/MCM',
+            modpow: 'Modpow', euler: 'Euler φ', fibonacci: 'Fibonacci',
+            // Algebra
+            cubic: 'Ecuación Cúbica', polynomial: 'Polinomio', set: 'Conjuntos',
+            logic: 'Lógica', sequence: 'Secuencia',
+            // Applied Math
+            newton: 'Newton', regression: 'Regresión Lineal', interpolation: 'Lagrange',
+            numericalIntegral: 'Integral Numérica', ode: 'EDO',
+            // Fun
+            relative: 'Familiar', loan: 'Préstamo', interest: 'Interés',
+            currency: 'Moneda', number: 'Número Chino', base: 'Base',
+            speed: 'Velocidad', bmi: 'IMC', tax: 'Impuesto',
+            // Converter
+            length: 'Longitud', weight: 'Peso', temperature: 'Temperatura', area: 'Área',
+            volume: 'Volumen', dataSize: 'Datos', from: 'De', to: 'A',
+            // History
+            noHistory: 'Sin historial de cálculos',
+            // Tutorial
+            tutorialTitle: 'Tutoriales de Matemáticas', tutorialDesc: 'Aprendizaje interactivo basado en MathWorld',
+            algebraTutorial: 'Álgebra Básica', calculusTutorial: 'Fundamentos de Cálculo',
+            geometryTutorial: 'Intro Geometría', probabilityTutorial: 'Probabilidad Básica',
+            linearAlgebraTutorial: 'Álgebra Lineal', trigonometryTutorial: 'Trigonometría',
+            // Common
+            input: 'Entrada', result: 'Resultado', error: 'Error', formula: 'Fórmula',
+            step: 'Paso', example: 'Ejemplo', explanation: 'Explicación', practice: 'Práctica',
+            // Language
+            lang: 'Idioma', langZh: '中文', langEn: 'English', langHi: 'हिन्दी', langEs: 'Español',
         }
     },
     
@@ -324,7 +391,7 @@ function setLanguage(lang) {
     i18n.setLang(lang);
     const langBtn = $('langSelector');
     if (langBtn) {
-        const langNames = { zh: '中文', en: 'EN', ja: '日本語' };
+        const langNames = { zh: '中文', en: 'EN', hi: 'हिन्दी', es: 'Español' };
         langBtn.textContent = langNames[lang] || lang;
     }
     const menu = $('langMenu');
@@ -3134,15 +3201,15 @@ function calculateApplied(){
 const tutorialData = {
     algebra: [
         {
-            title: { zh: '韦达定理', en: "Vieta's Formulas", ja: 'ヴィエタの公式' },
+            title: { zh: '韦达定理', en: "Vieta's Formulas", hi: 'विएटा सूत्र', es: 'Fórmulas de Vieta' },
             formula: 'x₁ + x₂ = -b/a\nx₁ · x₂ = c/a',
-            explanation: { zh: '一元二次方程 ax²+bx+c=0 的两根之和为 -b/a，两根之积为 c/a。', en: 'For ax²+bx+c=0: sum=-b/a, product=c/a.', ja: '二次方程式: 和=-b/a、積=c/a。' },
-            example: { zh: 'x²-5x+6=0 → 和=5, 积=6, 解为2和3', en: 'x²-5x+6=0 → sum=5, prod=6, roots 2&3', ja: 'x²-5x+6=0 → 和=5, 積=6, 解2と3' },
-            practice: { zh: '已知 2x²-8x+6=0，求两根之和与积', en: 'Given 2x²-8x+6=0, find sum/product', ja: '2x²-8x+6=0 で和と積を' },
+            explanation: { zh: '一元二次方程 ax²+bx+c=0 的两根之和为 -b/a，两根之积为 c/a。', en: 'For ax²+bx+c=0: sum=-b/a, product=c/a.', hi: 'ax²+bx+c=0: योग=-b/a, गुणनफल=c/a।', es: 'Para ax²+bx+c=0: suma=-b/a, producto=c/a.' },
+            example: { zh: 'x²-5x+6=0 → 和=5, 积=6, 解为2和3', en: 'x²-5x+6=0 → sum=5, prod=6, roots 2&3', hi: 'x²-5x+6=0 → योग=5, गुणनफल=6, मूल 2 और 3', es: 'x²-5x+6=0 → suma=5, prod=6, raíces 2 y 3' },
+            practice: { zh: '已知 2x²-8x+6=0，求两根之和与积', en: 'Given 2x²-8x+6=0, find sum/product', hi: '2x²-8x+6=0, योग/गुणनफल ज्ञात करें', es: 'Dados 2x²-8x+6=0, hallar suma/producto' },
             inputs: [
-                { id:'tut_a', label:{zh:'系数 a',en:'a',ja:'係数a'}, ph:'2' },
-                { id:'tut_b', label:{zh:'系数 b',en:'b',ja:'係数b'}, ph:'-8' },
-                { id:'tut_c', label:{zh:'系数 c',en:'c',ja:'係数c'}, ph:'6' }
+                { id:'tut_a', label:{zh:'系数 a',en:'a',hi:'गुणांक a',es:'coef a'}, ph:'2' },
+                { id:'tut_b', label:{zh:'系数 b',en:'b',hi:'गुणांक b',es:'coef b'}, ph:'-8' },
+                { id:'tut_c', label:{zh:'系数 c',en:'c',hi:'गुणांक c',es:'coef c'}, ph:'6' }
             ],
             solve(v) {
                 const a=+v.tut_a, b=+v.tut_b, c=+v.tut_c;
@@ -3154,15 +3221,15 @@ const tutorialData = {
             }
         },
         {
-            title: { zh: '因式分解', en: 'Factoring', ja: '因数分解' },
+            title: { zh: '因式分解', en: 'Factoring', hi: 'गुणनखंडन', es: 'Factorización' },
             formula: 'ax²+bx+c = a(x-x₁)(x-x₂)',
-            explanation: { zh: '二次多项式分解为两个一次因式的乘积。', en: 'Decompose quadratic into linear factors.', ja: '二次多項式を一次因数の積に分解。' },
-            example: { zh: 'x²-5x+6 = (x-2)(x-3)', en: 'x²-5x+6 = (x-2)(x-3)', ja: 'x²-5x+6 = (x-2)(x-3)' },
-            practice: { zh: '因式分解 x²+3x-10', en: 'Factor x²+3x-10', ja: '因数分解 x²+3x-10' },
+            explanation: { zh: '二次多项式分解为两个一次因式的乘积。', en: 'Decompose quadratic into linear factors.', hi: 'द्विघात बहुपद को रैखिक गुणनखंडों में विघटित करें।', es: 'Descomponer cuadrática en factores lineales.' },
+            example: { zh: 'x²-5x+6 = (x-2)(x-3)', en: 'x²-5x+6 = (x-2)(x-3)', hi: 'x²-5x+6 = (x-2)(x-3)', es: 'x²-5x+6 = (x-2)(x-3)' },
+            practice: { zh: '因式分解 x²+3x-10', en: 'Factor x²+3x-10', hi: 'x²+3x-10 का गुणनखंडन करें', es: 'Factorizar x²+3x-10' },
             inputs: [
-                { id:'tut_fa', label:{zh:'系数 a',en:'a',ja:'係数a'}, ph:'1' },
-                { id:'tut_fb', label:{zh:'系数 b',en:'b',ja:'係数b'}, ph:'3' },
-                { id:'tut_fc', label:{zh:'系数 c',en:'c',ja:'係数c'}, ph:'-10' }
+                { id:'tut_fa', label:{zh:'系数 a',en:'a',hi:'गुणांक a',es:'coef a'}, ph:'1' },
+                { id:'tut_fb', label:{zh:'系数 b',en:'b',hi:'गुणांक b',es:'coef b'}, ph:'3' },
+                { id:'tut_fc', label:{zh:'系数 c',en:'c',hi:'गुणांक c',es:'coef c'}, ph:'-10' }
             ],
             solve(v) {
                 const a=+v.tut_fa, b=+v.tut_fb, c=+v.tut_fc;
@@ -3176,14 +3243,14 @@ const tutorialData = {
     ],
     calculus: [
         {
-            title: { zh: '导数的定义', en: 'Derivative Definition', ja: '微分の定義' },
+            title: { zh: '导数的定义', en: 'Derivative Definition', hi: 'अवकलज की परिभाषा', es: 'Definición de Derivada' },
             formula: "f'(x) = lim[h→0] (f(x+h)-f(x))/h",
-            explanation: { zh: '导数是函数瞬时变化率，几何上是切线斜率。', en: 'Derivative = instantaneous rate of change.', ja: '微分は瞬間変化率、接線の傾き。' },
-            example: { zh: 'f(x)=x², f\'(3)=6', en: 'f(x)=x², f\'(3)=6', ja: 'f(x)=x², f\'(3)=6' },
-            practice: { zh: '求 f(x)=x³ 在 x=2 的导数', en: 'Find f\'(2) for f(x)=x³', ja: 'f(x)=x³ の x=2 での微分' },
+            explanation: { zh: '导数是函数瞬时变化率，几何上是切线斜率。', en: 'Derivative = instantaneous rate of change.', hi: 'अवकलज = तात्कालिक परिवर्तन दर।', es: 'Derivada = tasa de cambio instantánea.' },
+            example: { zh: 'f(x)=x², f\'(3)=6', en: 'f(x)=x², f\'(3)=6', hi: 'f(x)=x², f\'(3)=6', es: 'f(x)=x², f\'(3)=6' },
+            practice: { zh: '求 f(x)=x³ 在 x=2 的导数', en: 'Find f\'(2) for f(x)=x³', hi: 'f(x)=x³ के लिए f\'(2) ज्ञात करें', es: 'Hallar f\'(2) para f(x)=x³' },
             inputs: [
-                { id:'tut_df', label:{zh:'函数 f(x)',en:'f(x)',ja:'関数f(x)'}, ph:'x^3' },
-                { id:'tut_dx', label:{zh:'求导点 x₀',en:'x₀',ja:'微分点x₀'}, ph:'2' }
+                { id:'tut_df', label:{zh:'函数 f(x)',en:'f(x)',hi:'फलन f(x)',es:'f(x)'}, ph:'x^3' },
+                { id:'tut_dx', label:{zh:'求导点 x₀',en:'x₀',hi:'बिंदु x₀',es:'punto x₀'}, ph:'2' }
             ],
             solve(v) {
                 const x0=+v.tut_dx; if(isNaN(x0)) return '无效';
@@ -3195,15 +3262,15 @@ const tutorialData = {
             }
         },
         {
-            title: { zh: '定积分(数值)', en: 'Definite Integral', ja: '定積分' },
+            title: { zh: '定积分(数值)', en: 'Definite Integral', hi: 'निश्चित समाकलन', es: 'Integral Definida' },
             formula: '∫[a,b] f(x)dx',
-            explanation: { zh: '用梯形法数值近似计算定积分。', en: 'Trapezoidal rule numerical approximation.', ja: '台形公式による数値近似。' },
-            example: { zh: '∫[0,2] x²dx = 8/3 ≈ 2.6667', en: '∫[0,2] x²dx = 8/3 ≈ 2.6667', ja: '∫[0,2] x²dx ≈ 2.6667' },
-            practice: { zh: '计算 ∫[1,3](2x+1)dx', en: 'Evaluate ∫[1,3](2x+1)dx', ja: '∫[1,3](2x+1)dx を計算' },
+            explanation: { zh: '用梯形法数值近似计算定积分。', en: 'Trapezoidal rule numerical approximation.', hi: 'समलंब नियम संख्यात्मक सन्निकटन।', es: 'Aproximación numérica por regla trapezoidal.' },
+            example: { zh: '∫[0,2] x²dx = 8/3 ≈ 2.6667', en: '∫[0,2] x²dx = 8/3 ≈ 2.6667', hi: '∫[0,2] x²dx = 8/3 ≈ 2.6667', es: '∫[0,2] x²dx = 8/3 ≈ 2.6667' },
+            practice: { zh: '计算 ∫[1,3](2x+1)dx', en: 'Evaluate ∫[1,3](2x+1)dx', hi: '∫[1,3](2x+1)dx का मूल्यांकन करें', es: 'Evaluar ∫[1,3](2x+1)dx' },
             inputs: [
-                { id:'tut_if', label:{zh:'f(x)',en:'f(x)',ja:'f(x)'}, ph:'x^2' },
-                { id:'tut_ia', label:{zh:'下限 a',en:'a',ja:'下限a'}, ph:'0' },
-                { id:'tut_ib', label:{zh:'上限 b',en:'b',ja:'上限b'}, ph:'2' }
+                { id:'tut_if', label:{zh:'f(x)',en:'f(x)',hi:'f(x)',es:'f(x)'}, ph:'x^2' },
+                { id:'tut_ia', label:{zh:'下限 a',en:'a',hi:'निम्न a',es:'límite a'}, ph:'0' },
+                { id:'tut_ib', label:{zh:'上限 b',en:'b',hi:'उच्च b',es:'límite b'}, ph:'2' }
             ],
             solve(v) {
                 const a=+v.tut_ia, b=+v.tut_ib;
@@ -3219,14 +3286,14 @@ const tutorialData = {
     ],
     geometry: [
         {
-            title: { zh: '勾股定理', en: 'Pythagorean Theorem', ja: 'ピタゴラスの定理' },
+            title: { zh: '勾股定理', en: 'Pythagorean Theorem', hi: 'पाइथागोरस प्रमेय', es: 'Teorema de Pitágoras' },
             formula: 'a² + b² = c²',
-            explanation: { zh: '直角三角形，两直角边平方和等于斜边平方。', en: 'Right triangle: a²+b²=c².', ja: '直角三角形: a²+b²=c²。' },
-            example: { zh: 'a=3, b=4 → c=5', en: 'a=3, b=4 → c=5', ja: 'a=3, b=4 → c=5' },
-            practice: { zh: '求 a=5, b=12 的斜边', en: 'Find c for a=5, b=12', ja: 'a=5, b=12 で c' },
+            explanation: { zh: '直角三角形，两直角边平方和等于斜边平方。', en: 'Right triangle: a²+b²=c².', hi: 'समकोण त्रिभुज: a²+b²=c²।', es: 'Triángulo rectángulo: a²+b²=c².' },
+            example: { zh: 'a=3, b=4 → c=5', en: 'a=3, b=4 → c=5', hi: 'a=3, b=4 → c=5', es: 'a=3, b=4 → c=5' },
+            practice: { zh: '求 a=5, b=12 的斜边', en: 'Find c for a=5, b=12', hi: 'a=5, b=12 के लिए c ज्ञात करें', es: 'Hallar c para a=5, b=12' },
             inputs: [
-                { id:'tut_pa', label:{zh:'边 a',en:'a',ja:'辺a'}, ph:'3' },
-                { id:'tut_pb', label:{zh:'边 b',en:'b',ja:'辺b'}, ph:'4' }
+                { id:'tut_pa', label:{zh:'边 a',en:'a',hi:'भुजा a',es:'lado a'}, ph:'3' },
+                { id:'tut_pb', label:{zh:'边 b',en:'b',hi:'भुजा b',es:'lado b'}, ph:'4' }
             ],
             solve(v) {
                 const a=+v.tut_pa, b=+v.tut_pb;
@@ -3235,12 +3302,12 @@ const tutorialData = {
             }
         },
         {
-            title: { zh: '圆的面积与周长', en: 'Circle: Area & Circumference', ja: '円の面積と周長' },
+            title: { zh: '圆的面积与周长', en: 'Circle: Area & Circumference', hi: 'वृत्त: क्षेत्रफल और परिधि', es: 'Círculo: Área y Circunferencia' },
             formula: '面积=πr²  周长=2πr',
-            explanation: { zh: '圆面积=πr²，周长=2πr。', en: 'Area=πr², Circ=2πr.', ja: '面積=πr², 周長=2πr。' },
-            example: { zh: 'r=5 → 面积≈78.54, 周长≈31.42', en: 'r=5 → area≈78.54, circ≈31.42', ja: 'r=5 → 面積≈78.54' },
-            practice: { zh: '求 r=7 的面积和周长', en: 'Find area and circ for r=7', ja: 'r=7 の面積と周長' },
-            inputs: [{ id:'tut_cr', label:{zh:'半径 r',en:'r',ja:'半径r'}, ph:'5' }],
+            explanation: { zh: '圆面积=πr²，周长=2πr。', en: 'Area=πr², Circ=2πr.', hi: 'क्षेत्रफल=πr², परिधि=2πr।', es: 'Área=πr², Circ=2πr.' },
+            example: { zh: 'r=5 → 面积≈78.54, 周长≈31.42', en: 'r=5 → area≈78.54, circ≈31.42', hi: 'r=5 → क्षेत्रफल≈78.54, परिधि≈31.42', es: 'r=5 → área≈78.54, circ≈31.42' },
+            practice: { zh: '求 r=7 的面积和周长', en: 'Find area and circ for r=7', hi: 'r=7 के लिए क्षेत्रफल और परिधि', es: 'Hallar área y circ para r=7' },
+            inputs: [{ id:'tut_cr', label:{zh:'半径 r',en:'r',hi:'त्रिज्या r',es:'radio r'}, ph:'5' }],
             solve(v) {
                 const r=+v.tut_cr; if(isNaN(r)||r<=0) return '请输入正数';
                 return `面积=π·${r}²=${(r*r*Math.PI).toFixed(4)}\n周长=2π·${r}=${(2*r*Math.PI).toFixed(4)}`;
@@ -3249,14 +3316,14 @@ const tutorialData = {
     ],
     probability: [
         {
-            title: { zh: '古典概型', en: 'Classical Probability', ja: '古典的確率' },
+            title: { zh: '古典概型', en: 'Classical Probability', hi: 'शास्त्रीय प्रायिकता', es: 'Probabilidad Clásica' },
             formula: 'P(A) = m/n',
-            explanation: { zh: '等可能事件: P(A)=有利数/总数。', en: 'P(A)=favorable/total.', ja: 'P(A)=有利/全体。' },
-            example: { zh: '骰子偶数: P=3/6=50%', en: 'Die even: P=3/6=50%', ja: '偶数: P=3/6=50%' },
-            practice: { zh: '5红3蓝，取到红球的概率', en: '5 red 3 blue: P(red)?', ja: '赤5青3: 赤の確率?' },
+            explanation: { zh: '等可能事件: P(A)=有利数/总数。', en: 'P(A)=favorable/total.', hi: 'P(A)=अनुकूल/कुल।', es: 'P(A)=favorable/total.' },
+            example: { zh: '骰子偶数: P=3/6=50%', en: 'Die even: P=3/6=50%', hi: 'पासा सम: P=3/6=50%', es: 'Dado par: P=3/6=50%' },
+            practice: { zh: '5红3蓝，取到红球的概率', en: '5 red 3 blue: P(red)?', hi: '5 लाल 3 नीली: P(लाल)?', es: '5 rojas 3 azules: ¿P(roja)?' },
             inputs: [
-                { id:'tut_pm', label:{zh:'有利数 m',en:'m',ja:'有利m'}, ph:'5' },
-                { id:'tut_pn', label:{zh:'总数 n',en:'n',ja:'全体n'}, ph:'8' }
+                { id:'tut_pm', label:{zh:'有利数 m',en:'m',hi:'अनुकूल m',es:'favorable m'}, ph:'5' },
+                { id:'tut_pn', label:{zh:'总数 n',en:'n',hi:'कुल n',es:'total n'}, ph:'8' }
             ],
             solve(v) {
                 const m=+v.tut_pm, n=+v.tut_pn;
@@ -3267,23 +3334,23 @@ const tutorialData = {
     ],
     linearAlgebra: [
         {
-            title: { zh: '矩阵乘法', en: 'Matrix Multiplication', ja: '行列の積' },
+            title: { zh: '矩阵乘法', en: 'Matrix Multiplication', hi: 'मैट्रिक्स गुणन', es: 'Multiplicación de Matrices' },
             formula: 'C[i][j] = Σ A[i][k]·B[k][j]',
-            explanation: { zh: '矩阵乘法要求 A 列数 = B 行数。', en: 'A cols = B rows required.', ja: 'A列数=B行数が必要。' },
-            example: { zh: '使用"矩阵"面板实际操作', en: 'Use Matrix panel for practice', ja: '行列パネルで実践' },
-            practice: { zh: '使用"矩阵"面板进行计算', en: 'Use Matrix panel', ja: '行列パネルで計算' },
+            explanation: { zh: '矩阵乘法要求 A 列数 = B 行数。', en: 'A cols = B rows required.', hi: 'A स्तंभ = B पंक्ति आवश्यक।', es: 'Se requiere cols A = filas B.' },
+            example: { zh: '使用"矩阵"面板实际操作', en: 'Use Matrix panel for practice', hi: 'अभ्यास के लिए मैट्रिक्स पैनल का उपयोग करें', es: 'Usar panel Matriz para practicar' },
+            practice: { zh: '使用"矩阵"面板进行计算', en: 'Use Matrix panel', hi: 'मैट्रिक्स पैनल का उपयोग करें', es: 'Usar panel Matriz' },
             inputs: [],
             solve() { return '请使用"矩阵"面板进行矩阵运算练习。'; }
         }
     ],
     trigonometry: [
         {
-            title: { zh: '三角函数基本关系', en: 'Trig Identities', ja: '三角恒等式' },
+            title: { zh: '三角函数基本关系', en: 'Trig Identities', hi: 'त्रिकोणमितीय सर्वसमिकाएं', es: 'Identidades Trigonométricas' },
             formula: 'sin²θ+cos²θ=1\ntanθ=sinθ/cosθ',
-            explanation: { zh: '三角函数的勾股恒等式。', en: 'Pythagorean trig identity.', ja: 'ピタゴラスの恒等式。' },
-            example: { zh: 'sin²30°+cos²30°=0.25+0.75=1', en: 'sin²30°+cos²30°=0.25+0.75=1', ja: 'sin²30°+cos²30°=1' },
-            practice: { zh: '输入角度计算三角函数', en: 'Enter angle for trig values', ja: '角度で三角関数' },
-            inputs: [{ id:'tut_tri', label:{zh:'角度(度)',en:'Angle(°)',ja:'角度(度)'}, ph:'45' }],
+            explanation: { zh: '三角函数的勾股恒等式。', en: 'Pythagorean trig identity.', hi: 'पाइथागोरस त्रिकोणमितीय सर्वसमिका।', es: 'Identidad trigonométrica pitagórica.' },
+            example: { zh: 'sin²30°+cos²30°=0.25+0.75=1', en: 'sin²30°+cos²30°=0.25+0.75=1', hi: 'sin²30°+cos²30°=0.25+0.75=1', es: 'sin²30°+cos²30°=0.25+0.75=1' },
+            practice: { zh: '输入角度计算三角函数', en: 'Enter angle for trig values', hi: 'त्रिकोणमितीय मानों के लिए कोण दर्ज करें', es: 'Ingrese ángulo para valores trigonométricos' },
+            inputs: [{ id:'tut_tri', label:{zh:'角度(度)',en:'Angle(°)',hi:'कोण (डिग्री)',es:'Ángulo (°)'}, ph:'45' }],
             solve(v) {
                 const d=+v.tut_tri; if(isNaN(d)) return '无效';
                 const r=d*Math.PI/180;
