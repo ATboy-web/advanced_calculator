@@ -3,12 +3,359 @@ const $ = id => document.getElementById(id);
 const history = [];
 let currentPanel = 'basic';
 
+// ===== Multi-language Support (i18n) =====
+const i18n = {
+    currentLang: localStorage.getItem('calc-lang') || 'zh',
+    
+    translations: {
+        zh: {
+            // Header
+            title: '高级计算器', mode: 'DEG',
+            // Navigation tabs
+            basic: '基础', scientific: '科学', graph: '绘图', equation: '方程',
+            matrix: '矩阵', geometry: '几何', '3d': '3D', calculus: '微积分',
+            statistics: '概率统计', numbertheory: '数论', algebra: '代数',
+            appliedmath: '应用数学', fun: '趣味', converter: '转换', history: '历史',
+            tutorial: '教程',
+            // Basic calculator
+            clear: 'AC', backspace: '⌫', percent: '%', divide: '÷', multiply: '×',
+            subtract: '−', add: '+', negate: '±', equals: '=', decimal: '.',
+            // Scientific calculator
+            shift: '2nd', sin: 'sin', cos: 'cos', tan: 'tan', ln: 'ln', log: 'log',
+            sqrt: '√', square: 'x²', power: 'x^y', reciprocal: '1/x', abs: '|x|',
+            factorial: 'n!', exp: 'eˣ', ceil: '⌈x⌉', floor: '⌊x⌋',
+            // Graph
+            graphFunc: 'f(x) = sin(x)', plotBtn: '绘制图像', zoomIn: '+ 放大',
+            zoomOut: '- 缩小', reset: '重置', graphHelp: '滚轮缩放 | 拖拽平移 | 双击重置',
+            // Equation
+            linear: '一元一次', quadratic: '一元二次', system: '二元一次', solve: '求解',
+            eqResult: '输入系数后点击求解',
+            // Matrix
+            add: '加法', subtract: '减法', multiply: '乘法', determinant: '行列式',
+            inverse: '逆矩阵', calculate: '计算',
+            // Geometry
+            circle: '圆', triangle: '三角形', rectangle: '矩形', ellipse: '椭圆',
+            trapezoid: '梯形', polygon: '正多边形', sphere: '球体', cylinder: '圆柱体',
+            cone: '圆锥体', torus: '圆环体',
+            // 3D
+            surface: '3D曲面', vector: '向量运算', distance: '两点距离',
+            plane: '平面方程', line: '直线方程', curve3d: '参数曲线',
+            // Calculus
+            derivative: '导数', integral: '积分', limit: '极限', series: '级数',
+            taylor: '泰勒展开',
+            // Statistics
+            combination: '组合', permutation: '排列', descriptive: '描述统计',
+            binomial: '二项分布', normal: '正态分布', poisson: '泊松分布',
+            // Number Theory
+            prime: '素数检测', primeFactor: '素因数分解', gcd: 'GCD/LCM',
+            modpow: '模幂运算', euler: '欧拉函数', fibonacci: '斐波那契',
+            // Algebra
+            cubic: '三次方程', polynomial: '多项式运算', set: '集合运算',
+            logic: '逻辑运算', sequence: '数列求和',
+            // Applied Math
+            newton: '牛顿法', regression: '线性回归', interpolation: '拉格朗日插值',
+            numericalIntegral: '数值积分', ode: '微分方程',
+            // Fun
+            relative: '亲戚计算', loan: '房贷车贷', interest: '年化收益',
+            currency: '汇率计算', number: '大写数字', base: '进制计算',
+            speed: '速度计算', bmi: 'BMI计算', tax: '个税计算',
+            // Converter
+            length: '长度', weight: '重量', temperature: '温度', area: '面积',
+            volume: '体积', dataSize: '数据', from: '从', to: '到',
+            // History
+            noHistory: '暂无计算记录',
+            // Tutorial
+            tutorialTitle: '数学教程', tutorialDesc: '基于 MathWorld 数学百科的交互式学习教程',
+            algebraTutorial: '代数入门', calculusTutorial: '微积分基础',
+            geometryTutorial: '几何入门', probabilityTutorial: '概率基础',
+            linearAlgebraTutorial: '线性代数', trigonometryTutorial: '三角函数',
+            // Common
+            input: '输入', result: '结果', error: '错误', formula: '公式',
+            step: '步骤', example: '示例', explanation: '说明', practice: '练习',
+            // Language
+            lang: '语言', langZh: '中文', langEn: 'English', langJa: '日本語',
+        },
+        en: {
+            // Header
+            title: 'Advanced Calculator', mode: 'DEG',
+            // Navigation tabs
+            basic: 'Basic', scientific: 'Scientific', graph: 'Graph', equation: 'Equation',
+            matrix: 'Matrix', geometry: 'Geometry', '3d': '3D', calculus: 'Calculus',
+            statistics: 'Statistics', numbertheory: 'Number Theory', algebra: 'Algebra',
+            appliedmath: 'Applied Math', fun: 'Fun', converter: 'Converter', history: 'History',
+            tutorial: 'Tutorial',
+            // Basic calculator
+            clear: 'AC', backspace: '⌫', percent: '%', divide: '÷', multiply: '×',
+            subtract: '−', add: '+', negate: '±', equals: '=', decimal: '.',
+            // Scientific calculator
+            shift: '2nd', sin: 'sin', cos: 'cos', tan: 'tan', ln: 'ln', log: 'log',
+            sqrt: '√', square: 'x²', power: 'x^y', reciprocal: '1/x', abs: '|x|',
+            factorial: 'n!', exp: 'eˣ', ceil: '⌈x⌉', floor: '⌊x⌋',
+            // Graph
+            graphFunc: 'f(x) = sin(x)', plotBtn: 'Plot Graph', zoomIn: '+ Zoom In',
+            zoomOut: '- Zoom Out', reset: 'Reset', graphHelp: 'Scroll to zoom | Drag to pan | Double-click to reset',
+            // Equation
+            linear: 'Linear', quadratic: 'Quadratic', system: 'System of 2', solve: 'Solve',
+            eqResult: 'Enter coefficients and click Solve',
+            // Matrix
+            add: 'Add', subtract: 'Subtract', multiply: 'Multiply', determinant: 'Determinant',
+            inverse: 'Inverse', calculate: 'Calculate',
+            // Geometry
+            circle: 'Circle', triangle: 'Triangle', rectangle: 'Rectangle', ellipse: 'Ellipse',
+            trapezoid: 'Trapezoid', polygon: 'Polygon', sphere: 'Sphere', cylinder: 'Cylinder',
+            cone: 'Cone', torus: 'Torus',
+            // 3D
+            surface: '3D Surface', vector: 'Vector', distance: 'Distance',
+            plane: 'Plane', line: 'Line', curve3d: 'Parametric Curve',
+            // Calculus
+            derivative: 'Derivative', integral: 'Integral', limit: 'Limit', series: 'Series',
+            taylor: 'Taylor Expansion',
+            // Statistics
+            combination: 'Combination', permutation: 'Permutation', descriptive: 'Descriptive',
+            binomial: 'Binomial', normal: 'Normal', poisson: 'Poisson',
+            // Number Theory
+            prime: 'Prime Test', primeFactor: 'Prime Factors', gcd: 'GCD/LCM',
+            modpow: 'Modpow', euler: 'Euler φ', fibonacci: 'Fibonacci',
+            // Algebra
+            cubic: 'Cubic Eq', polynomial: 'Polynomial', set: 'Set Ops',
+            logic: 'Logic', sequence: 'Sequence',
+            // Applied Math
+            newton: 'Newton Method', regression: 'Linear Regression', interpolation: 'Lagrange',
+            numericalIntegral: 'Numerical Integral', ode: 'ODE',
+            // Fun
+            relative: 'Relative', loan: 'Loan', interest: 'Interest',
+            currency: 'Currency', number: 'Chinese Number', base: 'Base Convert',
+            speed: 'Speed', bmi: 'BMI', tax: 'Tax',
+            // Converter
+            length: 'Length', weight: 'Weight', temperature: 'Temperature', area: 'Area',
+            volume: 'Volume', dataSize: 'Data', from: 'From', to: 'To',
+            // History
+            noHistory: 'No calculation history',
+            // Tutorial
+            tutorialTitle: 'Math Tutorials', tutorialDesc: 'Interactive learning based on MathWorld encyclopedia',
+            algebraTutorial: 'Algebra Basics', calculusTutorial: 'Calculus Fundamentals',
+            geometryTutorial: 'Geometry Intro', probabilityTutorial: 'Probability Basics',
+            linearAlgebraTutorial: 'Linear Algebra', trigonometryTutorial: 'Trigonometry',
+            // Common
+            input: 'Input', result: 'Result', error: 'Error', formula: 'Formula',
+            step: 'Step', example: 'Example', explanation: 'Explanation', practice: 'Practice',
+            // Language
+            lang: 'Language', langZh: '中文', langEn: 'English', langJa: '日本語',
+        },
+        ja: {
+            // Header
+            title: '高度電卓', mode: 'DEG',
+            // Navigation tabs
+            basic: '基本', scientific: '科学', graph: 'グラフ', equation: '方程式',
+            matrix: '行列', geometry: '幾何', '3d': '3D', calculus: '微積分',
+            statistics: '統計', numbertheory: '数論', algebra: '代数',
+            appliedmath: '応用数学', fun: 'ファン', converter: '変換', history: '履歴',
+            tutorial: 'チュートリアル',
+            // Basic calculator
+            clear: 'AC', backspace: '⌫', percent: '%', divide: '÷', multiply: '×',
+            subtract: '−', add: '+', negate: '±', equals: '=', decimal: '.',
+            // Scientific calculator
+            shift: '2nd', sin: 'sin', cos: 'cos', tan: 'tan', ln: 'ln', log: 'log',
+            sqrt: '√', square: 'x²', power: 'x^y', reciprocal: '1/x', abs: '|x|',
+            factorial: 'n!', exp: 'eˣ', ceil: '⌈x⌉', floor: '⌊x⌋',
+            // Graph
+            graphFunc: 'f(x) = sin(x)', plotBtn: 'グラフ描画', zoomIn: '+ 拡大',
+            zoomOut: '- 縮小', reset: 'リセット', graphHelp: 'スクロールで拡大 | ドラッグで移動 | ダブルクリックでリセット',
+            // Equation
+            linear: '一次方程式', quadratic: '二次方程式', system: '連立方程式', solve: '求解',
+            eqResult: '係数を入力して求解をクリック',
+            // Matrix
+            add: '加算', subtract: '減算', multiply: '乗算', determinant: '行列式',
+            inverse: '逆行列', calculate: '計算',
+            // Geometry
+            circle: '円', triangle: '三角形', rectangle: '長方形', ellipse: '楕円',
+            trapezoid: '台形', polygon: '正多角形', sphere: '球', cylinder: '円柱',
+            cone: '円錐', torus: 'トーラス',
+            // 3D
+            surface: '3D曲面', vector: 'ベクトル', distance: '距離',
+            plane: '平面', line: '直線', curve3d: 'パラメトリック曲線',
+            // Calculus
+            derivative: '微分', integral: '積分', limit: '極限', series: '級数',
+            taylor: 'テイラー展開',
+            // Statistics
+            combination: '組合せ', permutation: '順列', descriptive: '記述統計',
+            binomial: '二項分布', normal: '正規分布', poisson: 'ポアソン分布',
+            // Number Theory
+            prime: '素数判定', primeFactor: '素因数分解', gcd: 'GCD/LCM',
+            modpow: 'べき剰余', euler: 'オイラーφ', fibonacci: 'フィボナッチ',
+            // Algebra
+            cubic: '三次方程式', polynomial: '多項式', set: '集合演算',
+            logic: '論理演算', sequence: '数列',
+            // Applied Math
+            newton: 'ニュートン法', regression: '線形回帰', interpolation: 'ラグランジュ',
+            numericalIntegral: '数値積分', ode: '微分方程式',
+            // Fun
+            relative: '親戚計算', loan: 'ローン', interest: '利息',
+            currency: '通貨', number: '大文字数字', base: '進数変換',
+            speed: '速度', bmi: 'BMI', tax: '税金',
+            // Converter
+            length: '長さ', weight: '重さ', temperature: '温度', area: '面積',
+            volume: '体積', dataSize: 'データ', from: 'から', to: 'まで',
+            // History
+            noHistory: '計算履歴がありません',
+            // Tutorial
+            tutorialTitle: '数学チュートリアル', tutorialDesc: 'MathWorld百科事典に基づくインタラクティブ学習',
+            algebraTutorial: '代数の基礎', calculusTutorial: '微積分の基礎',
+            geometryTutorial: '幾何学入門', probabilityTutorial: '確率の基礎',
+            linearAlgebraTutorial: '線形代数', trigonometryTutorial: '三角関数',
+            // Common
+            input: '入力', result: '結果', error: 'エラー', formula: '公式',
+            step: 'ステップ', example: '例', explanation: '説明', practice: '練習',
+            // Language
+            lang: '言語', langZh: '中文', langEn: 'English', langJa: '日本語',
+        }
+    },
+    
+    t(key) {
+        return this.translations[this.currentLang]?.[key] || this.translations.zh[key] || key;
+    },
+    
+    setLang(lang) {
+        this.currentLang = lang;
+        localStorage.setItem('calc-lang', lang);
+        this.updateUI();
+        document.documentElement.setAttribute('lang', lang);
+    },
+    
+    updateUI() {
+        // Update header title
+        const title = document.querySelector('.header h1');
+        if (title) title.textContent = this.t('title');
+        
+        // Update mode badge
+        const modeLabel = $('modeLabel');
+        if (modeLabel) modeLabel.textContent = this.t('mode');
+        
+        // Update tab buttons
+        document.querySelectorAll('.tab').forEach(tab => {
+            const onclick = tab.getAttribute('onclick');
+            if (onclick) {
+                const match = onclick.match(/showPanel\('(\w+)'\)/);
+                if (match) {
+                    const key = match[1];
+                    tab.textContent = this.t(key);
+                }
+            }
+        });
+        
+        // Update nav items (sidebar)
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const panel = item.dataset.panel;
+            if (panel) {
+                const emoji = item.querySelector('.emoji');
+                const emojiText = emoji ? emoji.textContent + ' ' : '';
+                item.innerHTML = emojiText + this.t(panel);
+            }
+        });
+        
+        // Update equation type buttons
+        this.updateEqTypeButtons('equation', ['linear', 'quadratic', 'system']);
+        this.updateEqTypeButtons('matrix', ['add', 'subtract', 'multiply', 'determinant', 'inverse']);
+        this.updateEqTypeButtons('geometry', ['circle', 'triangle', 'rectangle', 'ellipse', 'trapezoid', 'polygon', 'sphere', 'cylinder', 'cone', 'torus']);
+        this.updateEqTypeButtons('calculus', ['derivative', 'integral', 'limit', 'series', 'taylor']);
+        this.updateEqTypeButtons('statistics', ['combination', 'permutation', 'descriptive', 'binomial', 'normal', 'poisson']);
+        this.updateEqTypeButtons('numbertheory', ['prime', 'primeFactor', 'gcd', 'modpow', 'euler', 'fibonacci']);
+        this.updateEqTypeButtons('algebra', ['cubic', 'polynomial', 'set', 'logic', 'sequence']);
+        this.updateEqTypeButtons('appliedmath', ['newton', 'regression', 'interpolation', 'numericalIntegral', 'ode']);
+        this.updateEqTypeButtons('fun', ['relative', 'loan', 'interest', 'currency', 'number', 'base', 'speed', 'bmi', 'tax']);
+        
+        // Update 3D type buttons
+        const threeDButtons = document.querySelectorAll('#threeDTypeButtons button');
+        const threeDKeys = ['surface', 'vector', 'distance', 'plane', 'line', 'curve3d'];
+        threeDButtons.forEach((btn, i) => {
+            if (threeDKeys[i]) btn.textContent = this.t(threeDKeys[i]);
+        });
+        
+        // Update graph controls
+        const graphFunc = $('graphFunc');
+        if (graphFunc) graphFunc.placeholder = this.t('graphFunc');
+        const plotBtn = document.querySelector('.graph-btn');
+        if (plotBtn) plotBtn.textContent = this.t('plotBtn');
+        const graphHelp = document.querySelector('.graph-info');
+        if (graphHelp) graphHelp.textContent = this.t('graphHelp');
+        
+        // Update converter categories
+        this.updateConvCategories();
+        
+        // Update history empty message
+        const historyEmpty = document.querySelector('.history-empty');
+        if (historyEmpty && history.length === 0) historyEmpty.textContent = this.t('noHistory');
+        
+        // Update tutorial panel if exists
+        this.updateTutorialPanel();
+        // Re-render tutorial content with new language
+        if (currentPanel === 'tutorial') renderTutorial();
+    },
+    
+    updateEqTypeButtons(panelId, keys) {
+        const panel = $(panelId);
+        if (!panel) return;
+        const buttons = panel.querySelectorAll('.eq-type button');
+        buttons.forEach((btn, i) => {
+            if (keys[i]) btn.textContent = this.t(keys[i]);
+        });
+    },
+    
+    updateConvCategories() {
+        const cats = Object.keys(convData);
+        const container = $('convCats');
+        if (!container) return;
+        container.innerHTML = cats.map((c, i) => 
+            `<button ${i===0?'class="active"':''} onclick="setConvCat('${c}',this)">${this.t(c.toLowerCase()) || c}</button>`
+        ).join('');
+    },
+    
+    updateTutorialPanel() {
+        const tutorialBtns = document.querySelectorAll('#tutorial .eq-type button');
+        const tutorialKeys = ['algebraTutorial', 'calculusTutorial', 'geometryTutorial', 'probabilityTutorial', 'linearAlgebraTutorial', 'trigonometryTutorial'];
+        tutorialBtns.forEach((btn, i) => {
+            if (tutorialKeys[i]) btn.textContent = this.t(tutorialKeys[i]);
+        });
+    }
+};
+
+// Language switcher function
+function setLanguage(lang) {
+    i18n.setLang(lang);
+    const langBtn = $('langSelector');
+    if (langBtn) {
+        const langNames = { zh: '中文', en: 'EN', ja: '日本語' };
+        langBtn.textContent = langNames[lang] || lang;
+    }
+    const menu = $('langMenu');
+    if (menu) menu.classList.remove('show');
+}
+
+function toggleLangMenu() {
+    const menu = $('langMenu');
+    if (menu) menu.classList.toggle('show');
+}
+// Close lang menu on outside click
+document.addEventListener('click', function(e) {
+    const dd = document.querySelector('.lang-dropdown');
+    if (dd && !dd.contains(e.target)) {
+        const menu = $('langMenu');
+        if (menu) menu.classList.remove('show');
+    }
+});
+
 // Panel switching
 function showPanel(name) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    // Support both old tab-style and new sidebar nav-item style
     document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(t => t.classList.remove('active'));
     $(name).classList.add('active');
-    document.querySelector(`.tab[onclick="showPanel('${name}')"]`).classList.add('active');
+    // Try old tab selector first, then new nav-item selector
+    const tab = document.querySelector(`.tab[onclick="showPanel('${name}')"]`);
+    if (tab) tab.classList.add('active');
+    const navItem = document.querySelector(`.nav-item[data-panel="${name}"]`);
+    if (navItem) navItem.classList.add('active');
     currentPanel = name;
     if (name === 'graph') { graphView.syncFromInputs(); drawGraph(); }
     if (name === 'converter') initConverter();
@@ -22,6 +369,7 @@ function showPanel(name) {
     if (name === 'numbertheory') updateNumTheoryInputs();
     if (name === 'algebra') updateAlgebraInputs();
     if (name === 'appliedmath') updateAppliedInputs();
+    if (name === 'tutorial') setTutorialType('algebra');
 }
 
 // Calculator state
@@ -176,37 +524,99 @@ function drawGraph() {
     const xMin = graphView.xMin, xMax = graphView.xMax;
     const yMin = graphView.yMin, yMax = graphView.yMax;
 
-    ctx.fillStyle = '#0d1117';
+    // Determine current theme for colors
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const bgColor = isDark ? '#0d1117' : '#f8f9fa';
+    const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)';
+    const axisColor = isDark ? 'rgba(255,255,255,0.35)' : 'rgba(0,0,0,0.3)';
+    const labelColor = isDark ? 'rgba(150,180,220,0.8)' : 'rgba(60,80,120,0.85)';
+    const dotColor = isDark ? 'rgba(100,150,220,0.6)' : 'rgba(60,100,180,0.5)';
+
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, W, H);
 
-    // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-    ctx.lineWidth = 0.5;
+    // Calculate axis positions for label placement
+    const axisX = (0 >= xMin && 0 <= xMax) ? toX(0) : null;
+    const axisY = (0 >= yMin && 0 <= yMax) ? toY(0) : null;
+
     const xStep = getStep(xMax-xMin), yStep = getStep(yMax-yMin);
-    for(let x=Math.ceil(xMin/xStep)*xStep; x<=xMax; x+=xStep) { 
-        const sx=toX(x); 
-        ctx.beginPath(); ctx.moveTo(sx,0); ctx.lineTo(sx,H); ctx.stroke(); 
-        ctx.fillStyle='rgba(150,180,220,0.7)'; 
-        ctx.font='11px sans-serif'; 
+    const xDecimals = xStep < 1 ? Math.max(1, -Math.floor(Math.log10(xStep))) : 0;
+    const yDecimals = yStep < 1 ? Math.max(1, -Math.floor(Math.log10(yStep))) : 0;
+
+    // --- Draw vertical grid lines with numbers on them ---
+    ctx.lineWidth = 0.5;
+    ctx.strokeStyle = gridColor;
+    ctx.font = '11px sans-serif';
+    for (let x = Math.ceil(xMin/xStep)*xStep; x <= xMax; x += xStep) {
+        if (Math.abs(x) < xStep * 0.001) continue; // skip 0, handled by axis
+        const sx = toX(x);
+        ctx.beginPath(); ctx.moveTo(sx, 0); ctx.lineTo(sx, H); ctx.stroke();
+
+        // Place number ON the axis line (Y=0 line) or at top/bottom if no X axis visible
+        const labelY = axisY !== null ? axisY : 14;
+        ctx.fillStyle = labelColor;
         ctx.textAlign = 'center';
-        ctx.fillText(x.toFixed(xStep<1?1:0), sx, H-6); 
-    }
-    for(let y=Math.ceil(yMin/yStep)*yStep; y<=yMax; y+=yStep) { 
-        const sy=toY(y); 
-        ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke(); 
-        ctx.fillStyle='rgba(150,180,220,0.7)'; 
-        ctx.font='11px sans-serif';
-        ctx.textAlign = 'right';
-        ctx.fillText(y.toFixed(yStep<1?1:0), 30, sy+4); 
+        ctx.textBaseline = axisY !== null ? 'bottom' : 'top';
+        ctx.fillText(x.toFixed(xDecimals), sx, labelY - 4);
+
+        // Small dot at axis intersection
+        if (axisY !== null) {
+            ctx.fillStyle = dotColor;
+            ctx.beginPath(); ctx.arc(sx, axisY, 2.5, 0, Math.PI*2); ctx.fill();
+        }
     }
 
-    // Axes
-    ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+    // --- Draw horizontal grid lines with numbers on them ---
+    for (let y = Math.ceil(yMin/yStep)*yStep; y <= yMax; y += yStep) {
+        if (Math.abs(y) < yStep * 0.001) continue; // skip 0
+        const sy = toY(y);
+        ctx.strokeStyle = gridColor;
+        ctx.lineWidth = 0.5;
+        ctx.beginPath(); ctx.moveTo(0, sy); ctx.lineTo(W, sy); ctx.stroke();
+
+        // Place number ON the axis line (X=0 line) or at left/right if no Y axis visible
+        const labelX = axisX !== null ? axisX : 6;
+        ctx.fillStyle = labelColor;
+        ctx.textAlign = axisX !== null ? 'left' : 'left';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(y.toFixed(yDecimals), labelX + 4, sy);
+
+        // Small dot at axis intersection
+        if (axisX !== null) {
+            ctx.fillStyle = dotColor;
+            ctx.beginPath(); ctx.arc(axisX, sy, 2.5, 0, Math.PI*2); ctx.fill();
+        }
+    }
+
+    // --- Draw grid intersection dots ---
+    ctx.fillStyle = dotColor;
+    for (let x = Math.ceil(xMin/xStep)*xStep; x <= xMax; x += xStep) {
+        for (let y = Math.ceil(yMin/yStep)*yStep; y <= yMax; y += yStep) {
+            if (Math.abs(x) < xStep * 0.001 || Math.abs(y) < yStep * 0.001) continue;
+            const sx = toX(x), sy = toY(y);
+            ctx.beginPath(); ctx.arc(sx, sy, 1.5, 0, Math.PI*2); ctx.fill();
+        }
+    }
+
+    // --- Axes ---
+    ctx.strokeStyle = axisColor;
     ctx.lineWidth = 1.5;
-    if(xMin<=0&&xMax>=0) { const sx=toX(0); ctx.beginPath(); ctx.moveTo(sx,0); ctx.lineTo(sx,H); ctx.stroke(); }
-    if(yMin<=0&&yMax>=0) { const sy=toY(0); ctx.beginPath(); ctx.moveTo(0,sy); ctx.lineTo(W,sy); ctx.stroke(); }
+    if (axisX !== null) { ctx.beginPath(); ctx.moveTo(axisX, 0); ctx.lineTo(axisX, H); ctx.stroke(); }
+    if (axisY !== null) { ctx.beginPath(); ctx.moveTo(0, axisY); ctx.lineTo(W, axisY); ctx.stroke(); }
 
-    // Function curves (support multiple functions separated by ;)
+    // --- Origin label ---
+    if (axisX !== null && axisY !== null) {
+        ctx.fillStyle = labelColor;
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText('0', axisX + 4, axisY - 4);
+        // Origin dot
+        ctx.fillStyle = dotColor;
+        ctx.beginPath(); ctx.arc(axisX, axisY, 3, 0, Math.PI*2); ctx.fill();
+    }
+
+    // --- Function curves ---
     const funcs = expr.split(';').map(s=>s.trim()).filter(s=>s);
     const colors = ['#4fc3f7','#f87171','#34d399','#fb923c','#a78bfa','#f472b6'];
     funcs.forEach((fn, fi) => {
@@ -215,20 +625,20 @@ function drawGraph() {
         ctx.beginPath();
         let started = false;
         const steps = W * 2;
-        for(let i=0; i<=steps; i++) {
+        for (let i = 0; i <= steps; i++) {
             const x = xMin + (xMax-xMin)*i/steps;
             const y = evalFunc(fn, x);
             if (isFinite(y) && !isNaN(y)) {
                 const sx=toX(x), sy=toY(y);
-                if(!started) { ctx.moveTo(sx,sy); started=true; } else ctx.lineTo(sx,sy);
-            } else started=false;
+                if (!started) { ctx.moveTo(sx,sy); started=true; } else ctx.lineTo(sx,sy);
+            } else started = false;
         }
         ctx.stroke();
     });
 
     // Info overlay
     const info = $('graphInfo');
-    if(info) info.textContent = `x∈[${xMin.toFixed(1)}, ${xMax.toFixed(1)}]  y∈[${yMin.toFixed(1)}, ${yMax.toFixed(1)}] | 滚轮缩放 | 拖拽平移 | 双击重置`;
+    if (info) info.textContent = `x∈[${xMin.toFixed(1)}, ${xMax.toFixed(1)}]  y∈[${yMin.toFixed(1)}, ${yMax.toFixed(1)}] | 滚轮缩放 | 拖拽平移 | 双击重置`;
 
     function toX(x) { return (x-xMin)/(xMax-xMin)*W; }
     function toY(y) { return H-(y-yMin)/(yMax-yMin)*H; }
@@ -363,9 +773,9 @@ function setEqType(type, btn) {
     document.querySelectorAll('#equation .eq-type button').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
     const c = $('eqInputs');
-    if(type==='linear') c.innerHTML=`<div class="eq-input"><label>a</label><input id="eqA" value="2"></div><div class="eq-input"><label>b</label><input id="eqB" value="4"></div>`;
-    else if(type==='quadratic') c.innerHTML=`<div class="eq-input"><label>a</label><input id="eqA" value="1"></div><div class="eq-input"><label>b</label><input id="eqB" value="-3"></div><div class="eq-input"><label>c</label><input id="eqC" value="2"></div>`;
-    else c.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:8px"><div class="eq-input" style="flex:1"><label>a1</label><input id="eqA1" value="1"></div><div class="eq-input" style="flex:1"><label>b1</label><input id="eqB1" value="1"></div><div class="eq-input" style="flex:1"><label>c1</label><input id="eqC1" value="3"></div></div><div style="display:flex;gap:8px"><div class="eq-input" style="flex:1"><label>a2</label><input id="eqA2" value="2"></div><div class="eq-input" style="flex:1"><label>b2</label><input id="eqB2" value="-1"></div><div class="eq-input" style="flex:1"><label>c2</label><input id="eqC2" value="1"></div></div>`;
+    if(type==='linear') c.innerHTML=`<div class="eq-input"><label>a (x的系数)</label><input id="eqA" value="2"><div class="input-desc">方程 ax + b = 0 中 x 的系数</div></div><div class="eq-input"><label>b (常数项)</label><input id="eqB" value="4"><div class="input-desc">方程 ax + b = 0 中的常数</div></div>`;
+    else if(type==='quadratic') c.innerHTML=`<div class="eq-input"><label>a (x²系数)</label><input id="eqA" value="1"><div class="input-desc">二次项系数，不能为0</div></div><div class="eq-input"><label>b (x系数)</label><input id="eqB" value="-3"><div class="input-desc">一次项系数</div></div><div class="eq-input"><label>c (常数项)</label><input id="eqC" value="2"><div class="input-desc">方程 ax²+bx+c=0 中的常数</div></div>`;
+    else c.innerHTML=`<div style="display:flex;gap:8px;margin-bottom:8px"><div class="eq-input" style="flex:1"><label>a₁</label><input id="eqA1" value="1"><div class="input-desc">第一个方程 x 系数</div></div><div class="eq-input" style="flex:1"><label>b₁</label><input id="eqB1" value="1"><div class="input-desc">第一个方程 y 系数</div></div><div class="eq-input" style="flex:1"><label>c₁</label><input id="eqC1" value="3"><div class="input-desc">第一个方程常数</div></div></div><div style="display:flex;gap:8px"><div class="eq-input" style="flex:1"><label>a₂</label><input id="eqA2" value="2"><div class="input-desc">第二个方程 x 系数</div></div><div class="eq-input" style="flex:1"><label>b₂</label><input id="eqB2" value="-1"><div class="input-desc">第二个方程 y 系数</div></div><div class="eq-input" style="flex:1"><label>c₂</label><input id="eqC2" value="1"><div class="input-desc">第二个方程常数</div></div></div>`;
 }
 
 function solveEquation() {
@@ -1123,17 +1533,18 @@ function set3DType(type, btn) {
     update3DInputs();
 }
 
-// Event delegation for 3D type buttons (avoids conflicts with Three.js OrbitControls)
+// Event delegation for 3D type buttons
+// Note: OrbitControls only listens on the canvas element, not on the document,
+// so it does NOT interfere with button clicks. A simple click handler is sufficient.
 (function init3DButtons() {
     const container = document.getElementById('threeDTypeButtons');
     if (!container) return;
     container.addEventListener('click', function(e) {
         const btn = e.target.closest('button[data-3dtype]');
         if (!btn) return;
-        e.stopPropagation();
         const type = btn.getAttribute('data-3dtype');
         if (type) set3DType(type, btn);
-    }, true); // use capture phase to ensure it fires before OrbitControls
+    });
 })();
 
 function update3DInputs() {
@@ -1274,7 +1685,7 @@ function debounce(fn, delay) {
 }
 
 function initThreeJS() {
-    if (threeRenderer) return; // already initialized
+    if (threeRenderer) return true; // already initialized
     const canvas = $('threeDCanvas');
     if (!canvas || typeof THREE === 'undefined') {
         // Fallback: use 2D canvas if Three.js not loaded
@@ -2420,15 +2831,15 @@ function updateCalculusInputs() {
     const c = $('calculusInputs');
     switch (calculusType) {
         case 'derivative':
-            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="derivFunc" value="x^3+2*x^2-5*x+1"></div><div class="eq-input"><label>求导点 x₀ (留空给表达式)</label><input id="derivPoint" value=""></div><div class="eq-input"><label>阶数</label><input id="derivOrder" value="1" type="number" min="1" max="10"></div>`; break;
+            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="derivFunc" value="x^3+2*x^2-5*x+1"><div class="input-desc">支持 +,-,*,/,^, sin,cos,tan,ln,log,sqrt,abs,exp,pi</div></div><div class="eq-input"><label>求导点 x₀ (留空=表达式)</label><input id="derivPoint" value=""><div class="input-desc">输入具体x值求数值导数，留空则给出符号表达式</div></div><div class="eq-input"><label>导数阶数</label><input id="derivOrder" value="1" type="number" min="1" max="10"><div class="input-desc">1=一阶导数，2=二阶导数...</div></div>`; break;
         case 'integral':
-            c.innerHTML = `<div class="eq-input"><label>被积函数 f(x)</label><input id="integFunc" value="x^2"></div><div class="eq-input"><label>下限 a</label><input id="integA" value="0"></div><div class="eq-input"><label>上限 b</label><input id="integB" value="1"></div><div class="eq-input"><label>方法</label><select id="integMethod"><option value="simpson">辛普森法</option><option value="trapezoid">梯形法</option></select></div>`; break;
+            c.innerHTML = `<div class="eq-input"><label>被积函数 f(x)</label><input id="integFunc" value="x^2"><div class="input-desc">支持 +,-,*,/,^, sin,cos,tan,ln,log,sqrt,exp,pi</div></div><div class="eq-input"><label>积分下限 a</label><input id="integA" value="0"></div><div class="eq-input"><label>积分上限 b</label><input id="integB" value="1"></div><div class="eq-input"><label>数值方法</label><select id="integMethod"><option value="simpson">辛普森法(精度高)</option><option value="trapezoid">梯形法(速度快)</option></select></div>`; break;
         case 'limit':
-            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="limFunc" value="sin(x)/x"></div><div class="eq-input"><label>趋向点 x₀</label><input id="limPoint" value="0"></div>`; break;
+            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="limFunc" value="sin(x)/x"><div class="input-desc">支持 +,-,*,/,^, sin,cos,tan,ln,log,sqrt,exp,pi</div></div><div class="eq-input"><label>趋向点 x₀</label><input id="limPoint" value="0"><div class="input-desc">x趋向的值，可输入 inf 或 -inf 表示无穷</div></div>`; break;
         case 'series':
-            c.innerHTML = `<div class="eq-input"><label>通项 a(n)</label><input id="seriesTerm" value="1/n^2"></div><div class="eq-input"><label>起始 n</label><input id="seriesStart" value="1"></div><div class="eq-input"><label>项数 N</label><input id="seriesN" value="1000"></div>`; break;
+            c.innerHTML = `<div class="eq-input"><label>通项公式 a(n)</label><input id="seriesTerm" value="1/n^2"><div class="input-desc">用n表示项数，如 1/n^2, (-1)^n/n, 1/n!</div></div><div class="eq-input"><label>起始项 n</label><input id="seriesStart" value="1"><div class="input-desc">通常从n=1开始</div></div><div class="eq-input"><label>累加项数 N</label><input id="seriesN" value="1000"><div class="input-desc">累加前N项，越大越精确</div></div>`; break;
         case 'taylor':
-            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="taylorFunc" value="sin(x)"></div><div class="eq-input"><label>展开中心 x₀</label><input id="taylorCenter" value="0"></div><div class="eq-input"><label>阶数 n</label><input id="taylorOrder" value="8" type="number" min="1" max="20"></div>`; break;
+            c.innerHTML = `<div class="eq-input"><label>函数 f(x)</label><input id="taylorFunc" value="sin(x)"><div class="input-desc">支持 +,-,*,/,^, sin,cos,tan,ln,log,sqrt,exp</div></div><div class="eq-input"><label>展开中心 x₀</label><input id="taylorCenter" value="0"><div class="input-desc">通常为0(麦克劳林展开)，也可为其他值</div></div><div class="eq-input"><label>展开阶数 n</label><input id="taylorOrder" value="8" type="number" min="1" max="20"><div class="input-desc">阶数越高，近似越精确</div></div>`; break;
     }
 }
 
@@ -2534,12 +2945,12 @@ function setStatType(t,btn){statType=t;btn.parentElement.querySelectorAll('butto
 function updateStatInputs(){
     const c=$('statInputs');
     switch(statType){
-        case 'combination':c.innerHTML=`<div class="eq-input"><label>n</label><input id="combN" value="10"></div><div class="eq-input"><label>r</label><input id="combR" value="3"></div>`;break;
-        case 'permutation':c.innerHTML=`<div class="eq-input"><label>n</label><input id="permN" value="10"></div><div class="eq-input"><label>r</label><input id="permR" value="3"></div>`;break;
-        case 'descriptive':c.innerHTML=`<div class="eq-input"><label>数据 (逗号分隔)</label><input id="descData" value="2,4,4,4,5,5,7,9"></div>`;break;
-        case 'binomial':c.innerHTML=`<div class="eq-input"><label>n</label><input id="binN" value="10"></div><div class="eq-input"><label>p</label><input id="binP" value="0.5"></div><div class="eq-input"><label>k</label><input id="binK" value="5"></div>`;break;
-        case 'normal':c.innerHTML=`<div class="eq-input"><label>μ</label><input id="normMu" value="0"></div><div class="eq-input"><label>σ</label><input id="normSig" value="1"></div><div class="eq-input"><label>x</label><input id="normX" value="1.96"></div>`;break;
-        case 'poisson':c.innerHTML=`<div class="eq-input"><label>λ</label><input id="poisL" value="3"></div><div class="eq-input"><label>k</label><input id="poisK" value="2"></div>`;break;
+        case 'combination':c.innerHTML=`<div class="eq-input"><label>n (总数)</label><input id="combN" value="10"><div class="input-desc">从n个元素中选取</div></div><div class="eq-input"><label>r (选取数)</label><input id="combR" value="3"><div class="input-desc">选取r个元素，不考虑顺序</div></div>`;break;
+        case 'permutation':c.innerHTML=`<div class="eq-input"><label>n (总数)</label><input id="permN" value="10"><div class="input-desc">从n个元素中选取</div></div><div class="eq-input"><label>r (选取数)</label><input id="permR" value="3"><div class="input-desc">选取r个元素，考虑顺序</div></div>`;break;
+        case 'descriptive':c.innerHTML=`<div class="eq-input"><label>数据集 (逗号分隔)</label><input id="descData" value="2,4,4,4,5,5,7,9"><div class="input-desc">输入数字，用逗号分隔，如: 1,2,3,4,5</div></div>`;break;
+        case 'binomial':c.innerHTML=`<div class="eq-input"><label>n (试验次数)</label><input id="binN" value="10"><div class="input-desc">独立重复试验的总次数</div></div><div class="eq-input"><label>p (成功概率)</label><input id="binP" value="0.5"><div class="input-desc">每次试验成功的概率，0到1之间</div></div><div class="eq-input"><label>k (成功次数)</label><input id="binK" value="5"><div class="input-desc">恰好成功k次的概率</div></div>`;break;
+        case 'normal':c.innerHTML=`<div class="eq-input"><label>μ (均值)</label><input id="normMu" value="0"><div class="input-desc">正态分布的期望值/中心位置</div></div><div class="eq-input"><label>σ (标准差)</label><input id="normSig" value="1"><div class="input-desc">标准差，必须为正数，越大分布越分散</div></div><div class="eq-input"><label>x (计算点)</label><input id="normX" value="1.96"><div class="input-desc">计算 P(X≤x) 的值</div></div>`;break;
+        case 'poisson':c.innerHTML=`<div class="eq-input"><label>λ (平均发生率)</label><input id="poisL" value="3"><div class="input-desc">单位时间内平均发生次数</div></div><div class="eq-input"><label>k (发生次数)</label><input id="poisK" value="2"><div class="input-desc">恰好发生k次的概率</div></div>`;break;
     }
 }
 function perm(n,r){if(r>n)return 0;let v=1;for(let i=0;i<r;i++)v*=(n-i);return v;}
@@ -2570,12 +2981,12 @@ function setNumTheoryType(t,btn){numTheoryType=t;btn.parentElement.querySelector
 function updateNumTheoryInputs(){
     const c=$('numTheoryInputs');
     switch(numTheoryType){
-        case 'prime':c.innerHTML=`<div class="eq-input"><label>数字</label><input id="ntPrime" value="997"></div>`;break;
-        case 'primeFactor':c.innerHTML=`<div class="eq-input"><label>数字</label><input id="ntFactor" value="360"></div>`;break;
-        case 'gcd':c.innerHTML=`<div class="eq-input"><label>a</label><input id="ntA" value="48"></div><div class="eq-input"><label>b</label><input id="ntB" value="18"></div>`;break;
-        case 'modpow':c.innerHTML=`<div class="eq-input"><label>底数 a</label><input id="ntBase" value="2"></div><div class="eq-input"><label>指数 b</label><input id="ntExp" value="10"></div><div class="eq-input"><label>模 m</label><input id="ntMod" value="1000"></div>`;break;
-        case 'euler':c.innerHTML=`<div class="eq-input"><label>n</label><input id="ntEuler" value="12"></div>`;break;
-        case 'fibonacci':c.innerHTML=`<div class="eq-input"><label>n</label><input id="ntFib" value="20"></div>`;break;
+        case 'prime':c.innerHTML=`<div class="eq-input"><label>检测数字</label><input id="ntPrime" value="997"><div class="input-desc">判断该数是否为素数(只能被1和自身整除)</div></div>`;break;
+        case 'primeFactor':c.innerHTML=`<div class="eq-input"><label>分解数字</label><input id="ntFactor" value="360"><div class="input-desc">将该数分解为素因数的乘积</div></div>`;break;
+        case 'gcd':c.innerHTML=`<div class="eq-input"><label>数字 a</label><input id="ntA" value="48"><div class="input-desc">第一个正整数</div></div><div class="eq-input"><label>数字 b</label><input id="ntB" value="18"><div class="input-desc">第二个正整数</div></div>`;break;
+        case 'modpow':c.innerHTML=`<div class="eq-input"><label>底数 a</label><input id="ntBase" value="2"><div class="input-desc">计算 a^b mod m</div></div><div class="eq-input"><label>指数 b</label><input id="ntExp" value="10"><div class="input-desc">指数，非负整数</div></div><div class="eq-input"><label>模数 m</label><input id="ntMod" value="1000"><div class="input-desc">取模的除数，正整数</div></div>`;break;
+        case 'euler':c.innerHTML=`<div class="eq-input"><label>数字 n</label><input id="ntEuler" value="12"><div class="input-desc">计算 φ(n)：小于n且与n互素的正整数个数</div></div>`;break;
+        case 'fibonacci':c.innerHTML=`<div class="eq-input"><label>项数 n</label><input id="ntFib" value="20"><div class="input-desc">计算第n个斐波那契数 F(0)=0, F(1)=1, F(n)=F(n-1)+F(n-2)</div></div>`;break;
     }
 }
 function isPrime(n){if(n<2)return false;if(n<4)return true;if(n%2===0||n%3===0)return false;for(let i=5;i*i<=n;i+=6)if(n%i===0||n%(i+2)===0)return false;return true;}
@@ -2716,4 +3127,215 @@ function calculateApplied(){
             }
         }
     }catch(e){r.textContent='错误: '+e.message;}
+}
+
+// ===== Math Tutorial System =====
+// Based on MathWorld (mathworld.net.cn)
+const tutorialData = {
+    algebra: [
+        {
+            title: { zh: '韦达定理', en: "Vieta's Formulas", ja: 'ヴィエタの公式' },
+            formula: 'x₁ + x₂ = -b/a\nx₁ · x₂ = c/a',
+            explanation: { zh: '一元二次方程 ax²+bx+c=0 的两根之和为 -b/a，两根之积为 c/a。', en: 'For ax²+bx+c=0: sum=-b/a, product=c/a.', ja: '二次方程式: 和=-b/a、積=c/a。' },
+            example: { zh: 'x²-5x+6=0 → 和=5, 积=6, 解为2和3', en: 'x²-5x+6=0 → sum=5, prod=6, roots 2&3', ja: 'x²-5x+6=0 → 和=5, 積=6, 解2と3' },
+            practice: { zh: '已知 2x²-8x+6=0，求两根之和与积', en: 'Given 2x²-8x+6=0, find sum/product', ja: '2x²-8x+6=0 で和と積を' },
+            inputs: [
+                { id:'tut_a', label:{zh:'系数 a',en:'a',ja:'係数a'}, ph:'2' },
+                { id:'tut_b', label:{zh:'系数 b',en:'b',ja:'係数b'}, ph:'-8' },
+                { id:'tut_c', label:{zh:'系数 c',en:'c',ja:'係数c'}, ph:'6' }
+            ],
+            solve(v) {
+                const a=+v.tut_a, b=+v.tut_b, c=+v.tut_c;
+                if(!a) return 'a ≠ 0';
+                const d=b*b-4*a*c;
+                let r=`和=${(-b/a).toFixed(4)} 积=${(c/a).toFixed(4)}`;
+                if(d>=0){const x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);r+=`\nx₁=${x1.toFixed(4)}, x₂=${x2.toFixed(4)}`;}
+                return r;
+            }
+        },
+        {
+            title: { zh: '因式分解', en: 'Factoring', ja: '因数分解' },
+            formula: 'ax²+bx+c = a(x-x₁)(x-x₂)',
+            explanation: { zh: '二次多项式分解为两个一次因式的乘积。', en: 'Decompose quadratic into linear factors.', ja: '二次多項式を一次因数の積に分解。' },
+            example: { zh: 'x²-5x+6 = (x-2)(x-3)', en: 'x²-5x+6 = (x-2)(x-3)', ja: 'x²-5x+6 = (x-2)(x-3)' },
+            practice: { zh: '因式分解 x²+3x-10', en: 'Factor x²+3x-10', ja: '因数分解 x²+3x-10' },
+            inputs: [
+                { id:'tut_fa', label:{zh:'系数 a',en:'a',ja:'係数a'}, ph:'1' },
+                { id:'tut_fb', label:{zh:'系数 b',en:'b',ja:'係数b'}, ph:'3' },
+                { id:'tut_fc', label:{zh:'系数 c',en:'c',ja:'係数c'}, ph:'-10' }
+            ],
+            solve(v) {
+                const a=+v.tut_fa, b=+v.tut_fb, c=+v.tut_fc;
+                if(!a) return 'a ≠ 0';
+                const d=b*b-4*a*c;
+                if(d<0) return '判别式<0';
+                const x1=(-b+Math.sqrt(d))/(2*a), x2=(-b-Math.sqrt(d))/(2*a);
+                return `=(x${x1>=0?'-':'+'}${Math.abs(x1).toFixed(4)})(x${x2>=0?'-':'+'}${Math.abs(x2).toFixed(4)})`;
+            }
+        }
+    ],
+    calculus: [
+        {
+            title: { zh: '导数的定义', en: 'Derivative Definition', ja: '微分の定義' },
+            formula: "f'(x) = lim[h→0] (f(x+h)-f(x))/h",
+            explanation: { zh: '导数是函数瞬时变化率，几何上是切线斜率。', en: 'Derivative = instantaneous rate of change.', ja: '微分は瞬間変化率、接線の傾き。' },
+            example: { zh: 'f(x)=x², f\'(3)=6', en: 'f(x)=x², f\'(3)=6', ja: 'f(x)=x², f\'(3)=6' },
+            practice: { zh: '求 f(x)=x³ 在 x=2 的导数', en: 'Find f\'(2) for f(x)=x³', ja: 'f(x)=x³ の x=2 での微分' },
+            inputs: [
+                { id:'tut_df', label:{zh:'函数 f(x)',en:'f(x)',ja:'関数f(x)'}, ph:'x^3' },
+                { id:'tut_dx', label:{zh:'求导点 x₀',en:'x₀',ja:'微分点x₀'}, ph:'2' }
+            ],
+            solve(v) {
+                const x0=+v.tut_dx; if(isNaN(x0)) return '无效';
+                try{
+                    const s=(v.tut_df||'x^2').replace(/\^/g,'**').replace(/sin/g,'Math.sin').replace(/cos/g,'Math.cos').replace(/tan/g,'Math.tan').replace(/ln/g,'Math.log').replace(/log/g,'Math.log10').replace(/sqrt/g,'Math.sqrt').replace(/exp/g,'Math.exp');
+                    const f=new Function('x','return '+s), h=1e-7, d=(f(x0+h)-f(x0-h))/(2*h);
+                    return `f(${x0})=${f(x0).toFixed(6)}\nf'(${x0})≈${d.toFixed(6)}`;
+                }catch(e){return '错误: '+e.message;}
+            }
+        },
+        {
+            title: { zh: '定积分(数值)', en: 'Definite Integral', ja: '定積分' },
+            formula: '∫[a,b] f(x)dx',
+            explanation: { zh: '用梯形法数值近似计算定积分。', en: 'Trapezoidal rule numerical approximation.', ja: '台形公式による数値近似。' },
+            example: { zh: '∫[0,2] x²dx = 8/3 ≈ 2.6667', en: '∫[0,2] x²dx = 8/3 ≈ 2.6667', ja: '∫[0,2] x²dx ≈ 2.6667' },
+            practice: { zh: '计算 ∫[1,3](2x+1)dx', en: 'Evaluate ∫[1,3](2x+1)dx', ja: '∫[1,3](2x+1)dx を計算' },
+            inputs: [
+                { id:'tut_if', label:{zh:'f(x)',en:'f(x)',ja:'f(x)'}, ph:'x^2' },
+                { id:'tut_ia', label:{zh:'下限 a',en:'a',ja:'下限a'}, ph:'0' },
+                { id:'tut_ib', label:{zh:'上限 b',en:'b',ja:'上限b'}, ph:'2' }
+            ],
+            solve(v) {
+                const a=+v.tut_ia, b=+v.tut_ib;
+                if(isNaN(a)||isNaN(b)) return '无效';
+                try{
+                    const s=(v.tut_if||'x^2').replace(/\^/g,'**').replace(/sin/g,'Math.sin').replace(/cos/g,'Math.cos').replace(/tan/g,'Math.tan').replace(/ln/g,'Math.log').replace(/log/g,'Math.log10').replace(/sqrt/g,'Math.sqrt').replace(/exp/g,'Math.exp');
+                    const f=new Function('x','return '+s), n=10000, h=(b-a)/n;
+                    let sum=f(a)+f(b); for(let i=1;i<n;i++) sum+=2*f(a+i*h);
+                    return `∫[${a},${b}] ≈ ${((h/2)*sum).toFixed(6)}`;
+                }catch(e){return '错误: '+e.message;}
+            }
+        }
+    ],
+    geometry: [
+        {
+            title: { zh: '勾股定理', en: 'Pythagorean Theorem', ja: 'ピタゴラスの定理' },
+            formula: 'a² + b² = c²',
+            explanation: { zh: '直角三角形，两直角边平方和等于斜边平方。', en: 'Right triangle: a²+b²=c².', ja: '直角三角形: a²+b²=c²。' },
+            example: { zh: 'a=3, b=4 → c=5', en: 'a=3, b=4 → c=5', ja: 'a=3, b=4 → c=5' },
+            practice: { zh: '求 a=5, b=12 的斜边', en: 'Find c for a=5, b=12', ja: 'a=5, b=12 で c' },
+            inputs: [
+                { id:'tut_pa', label:{zh:'边 a',en:'a',ja:'辺a'}, ph:'3' },
+                { id:'tut_pb', label:{zh:'边 b',en:'b',ja:'辺b'}, ph:'4' }
+            ],
+            solve(v) {
+                const a=+v.tut_pa, b=+v.tut_pb;
+                if(isNaN(a)||isNaN(b)) return '无效';
+                return `c=√(${a}²+${b}²)=${Math.sqrt(a*a+b*b).toFixed(4)}\n面积=½·${a}·${b}=${(a*b/2).toFixed(4)}`;
+            }
+        },
+        {
+            title: { zh: '圆的面积与周长', en: 'Circle: Area & Circumference', ja: '円の面積と周長' },
+            formula: '面积=πr²  周长=2πr',
+            explanation: { zh: '圆面积=πr²，周长=2πr。', en: 'Area=πr², Circ=2πr.', ja: '面積=πr², 周長=2πr。' },
+            example: { zh: 'r=5 → 面积≈78.54, 周长≈31.42', en: 'r=5 → area≈78.54, circ≈31.42', ja: 'r=5 → 面積≈78.54' },
+            practice: { zh: '求 r=7 的面积和周长', en: 'Find area and circ for r=7', ja: 'r=7 の面積と周長' },
+            inputs: [{ id:'tut_cr', label:{zh:'半径 r',en:'r',ja:'半径r'}, ph:'5' }],
+            solve(v) {
+                const r=+v.tut_cr; if(isNaN(r)||r<=0) return '请输入正数';
+                return `面积=π·${r}²=${(r*r*Math.PI).toFixed(4)}\n周长=2π·${r}=${(2*r*Math.PI).toFixed(4)}`;
+            }
+        }
+    ],
+    probability: [
+        {
+            title: { zh: '古典概型', en: 'Classical Probability', ja: '古典的確率' },
+            formula: 'P(A) = m/n',
+            explanation: { zh: '等可能事件: P(A)=有利数/总数。', en: 'P(A)=favorable/total.', ja: 'P(A)=有利/全体。' },
+            example: { zh: '骰子偶数: P=3/6=50%', en: 'Die even: P=3/6=50%', ja: '偶数: P=3/6=50%' },
+            practice: { zh: '5红3蓝，取到红球的概率', en: '5 red 3 blue: P(red)?', ja: '赤5青3: 赤の確率?' },
+            inputs: [
+                { id:'tut_pm', label:{zh:'有利数 m',en:'m',ja:'有利m'}, ph:'5' },
+                { id:'tut_pn', label:{zh:'总数 n',en:'n',ja:'全体n'}, ph:'8' }
+            ],
+            solve(v) {
+                const m=+v.tut_pm, n=+v.tut_pn;
+                if(isNaN(m)||isNaN(n)||n<=0||m<0||m>n) return '0≤m≤n';
+                return `P=${m}/${n}=${(m/n*100).toFixed(2)}%`;
+            }
+        }
+    ],
+    linearAlgebra: [
+        {
+            title: { zh: '矩阵乘法', en: 'Matrix Multiplication', ja: '行列の積' },
+            formula: 'C[i][j] = Σ A[i][k]·B[k][j]',
+            explanation: { zh: '矩阵乘法要求 A 列数 = B 行数。', en: 'A cols = B rows required.', ja: 'A列数=B行数が必要。' },
+            example: { zh: '使用"矩阵"面板实际操作', en: 'Use Matrix panel for practice', ja: '行列パネルで実践' },
+            practice: { zh: '使用"矩阵"面板进行计算', en: 'Use Matrix panel', ja: '行列パネルで計算' },
+            inputs: [],
+            solve() { return '请使用"矩阵"面板进行矩阵运算练习。'; }
+        }
+    ],
+    trigonometry: [
+        {
+            title: { zh: '三角函数基本关系', en: 'Trig Identities', ja: '三角恒等式' },
+            formula: 'sin²θ+cos²θ=1\ntanθ=sinθ/cosθ',
+            explanation: { zh: '三角函数的勾股恒等式。', en: 'Pythagorean trig identity.', ja: 'ピタゴラスの恒等式。' },
+            example: { zh: 'sin²30°+cos²30°=0.25+0.75=1', en: 'sin²30°+cos²30°=0.25+0.75=1', ja: 'sin²30°+cos²30°=1' },
+            practice: { zh: '输入角度计算三角函数', en: 'Enter angle for trig values', ja: '角度で三角関数' },
+            inputs: [{ id:'tut_tri', label:{zh:'角度(度)',en:'Angle(°)',ja:'角度(度)'}, ph:'45' }],
+            solve(v) {
+                const d=+v.tut_tri; if(isNaN(d)) return '无效';
+                const r=d*Math.PI/180;
+                return `sin${d}°=${Math.sin(r).toFixed(6)}\ncos${d}°=${Math.cos(r).toFixed(6)}\ntan${d}°=${Math.tan(r).toFixed(6)}\n验证 sin²+cos²=${(Math.sin(r)**2+Math.cos(r)**2).toFixed(10)}`;
+            }
+        }
+    ]
+};
+
+let currentTutorialType = 'algebra';
+let currentTutorialIdx = 0;
+
+function setTutorialType(type, btn) {
+    currentTutorialType = type;
+    currentTutorialIdx = 0;
+    document.querySelectorAll('#tutorial .eq-type button').forEach(b => b.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    renderTutorial();
+}
+
+function renderTutorial() {
+    const el = $('tutorialContent');
+    if (!el) return;
+    const lessons = tutorialData[currentTutorialType];
+    if (!lessons || !lessons.length) { el.innerHTML = '<div class="history-empty">暂无内容</div>'; return; }
+    const L = lessons[currentTutorialIdx];
+    const lang = i18n.currentLang;
+    const t = k => (L[k] && L[k][lang]) || (L[k] && L[k].zh) || '';
+    let html = `<div class="tutorial-lesson">
+        <div class="tutorial-nav">${lessons.map((_,i)=>`<button class="${i===currentTutorialIdx?'active':''}" onclick="currentTutorialIdx=${i};renderTutorial()">${i+1}</button>`).join('')}
+        <span class="tutorial-count">${currentTutorialIdx+1}/${lessons.length}</span></div>
+        <h3 class="tutorial-title">${t('title')}</h3>
+        <div class="formula-box"><div class="formula-title">${i18n.t('formula')}</div><pre>${L.formula}</pre></div>
+        <div class="process-box"><div class="step">${t('explanation')}</div></div>
+        <div class="formula-box"><div class="formula-title">${i18n.t('example')}</div><pre>${t('example')}</pre></div>
+        <div class="calculus-step">${i18n.t('practice')}: ${t('practice')}</div>`;
+    if (L.inputs && L.inputs.length) {
+        html += '<div class="tutorial-inputs">';
+        L.inputs.forEach(inp => {
+            html += `<div class="eq-input"><label>${inp.label[lang]||inp.label.zh||''}</label><input id="${inp.id}" placeholder="${inp.ph||''}"></div>`;
+        });
+        html += `<button class="action-btn" onclick="solveTutorial()">${i18n.t('solve')}</button></div>`;
+    }
+    html += '<div class="eq-result" id="tutorialResult" style="display:none"></div></div>';
+    el.innerHTML = html;
+}
+
+function solveTutorial() {
+    const L = (tutorialData[currentTutorialType] || [])[currentTutorialIdx];
+    if (!L || !L.solve) return;
+    const vals = {};
+    if (L.inputs) L.inputs.forEach(inp => { vals[inp.id] = ($(inp.id)||{}).value||''; });
+    const r = $('tutorialResult');
+    if (r) { r.style.display = 'block'; r.textContent = L.solve(vals); }
 }

@@ -648,12 +648,58 @@
         /* Ensure 3D panel buttons are always clickable above WebGL canvas */
         #3d .eq-type { position: relative; z-index: 999; }
         #3d .eq-type button { position: relative; z-index: 999; }
+        /* Language dropdown */
+        .lang-dropdown { position: relative; }
+        .lang-btn {
+            padding: 6px 14px; border-radius: var(--radius-xl); font-size: 12px; font-weight: 600;
+            background: rgba(99,102,241,0.15); color: var(--primary-light);
+            border: 1px solid rgba(99,102,241,0.3); cursor: pointer;
+            transition: var(--transition);
+        }
+        .lang-btn:hover { background: rgba(99,102,241,0.25); }
+        .lang-menu {
+            display: none; position: absolute; top: 110%; right: 0;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius-sm); overflow: hidden; z-index: 9999;
+            box-shadow: var(--shadow-lg); min-width: 100px;
+        }
+        .lang-menu.show { display: block; }
+        .lang-menu button {
+            display: block; width: 100%; padding: 10px 16px; text-align: left;
+            background: transparent; color: var(--text); border: none; cursor: pointer;
+            font-size: 13px; transition: var(--transition);
+        }
+        .lang-menu button:hover { background: var(--card); color: var(--primary-light); }
+        /* Tutorial */
+        .tutorial-title { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+        .tutorial-nav { display: flex; gap: 8px; align-items: center; margin-bottom: 16px; flex-wrap: wrap; }
+        .tutorial-nav button {
+            width: 36px; height: 36px; border-radius: 50%; background: var(--card);
+            color: var(--text2); border: 1px solid var(--border); cursor: pointer;
+            font-size: 14px; transition: var(--transition); display: flex; align-items: center; justify-content: center;
+        }
+        .tutorial-nav button:hover { border-color: var(--primary); color: var(--text); }
+        .tutorial-nav button.active { background: var(--gradient); color: #fff; border-color: transparent; }
+        .tutorial-count { color: var(--text2); font-size: 13px; margin-left: 8px; }
+        .tutorial-lesson { padding-bottom: 20px; }
+        .tutorial-inputs { margin-top: 16px; }
+        pre { white-space: pre-wrap; word-break: break-all; font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace; margin: 0; }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>高级计算器</h1>
-        <span id="modeLabel" class="mode-badge">DEG</span>
+        <div style="display:flex;align-items:center;gap:12px;-webkit-app-region:no-drag;">
+            <div class="lang-dropdown">
+                <button id="langSelector" class="lang-btn" onclick="toggleLangMenu()">中文</button>
+                <div id="langMenu" class="lang-menu">
+                    <button onclick="setLanguage('zh')">中文</button>
+                    <button onclick="setLanguage('en')">English</button>
+                    <button onclick="setLanguage('ja')">日本語</button>
+                </div>
+            </div>
+            <span id="modeLabel" class="mode-badge">DEG</span>
+        </div>
     </div>
     <div class="tabs">
         <button class="tab active" onclick="showPanel('basic')">基础</button>
@@ -671,6 +717,7 @@
         <button class="tab" onclick="showPanel('fun')">趣味</button>
         <button class="tab" onclick="showPanel('converter')">转换</button>
         <button class="tab" onclick="showPanel('history')">历史</button>
+        <button class="tab" onclick="showPanel('tutorial')">教程</button>
     </div>
 
     <!-- Basic -->
@@ -717,8 +764,11 @@
     <!-- Graph -->
     <div id="graph" class="panel">
         <div class="graph-controls">
-            <input id="graphFunc" type="text" placeholder="f(x) = sin(x)" value="sin(x)">
-            <div class="graph-input-row"><input id="xMin" type="number" value="-10"><input id="xMax" type="number" value="10"></div>
+            <input id="graphFunc" type="text" placeholder="如 sin(x), x^2, cos(x)*exp(-x/5)" value="sin(x)">
+            <div class="graph-input-row">
+                <div style="flex:1"><label style="font-size:12px;color:var(--text2)">X 最小值</label><input id="xMin" type="number" value="-10" style="width:100%"></div>
+                <div style="flex:1"><label style="font-size:12px;color:var(--text2)">X 最大值</label><input id="xMax" type="number" value="10" style="width:100%"></div>
+            </div>
             <button class="graph-btn" onclick="graphView.syncFromInputs();drawGraph()">绘制图像</button>
             <div style="display:flex;gap:8px;margin-top:8px">
                 <button class="graph-ctrl-btn" onclick="graphZoom(1.5)">+ 放大</button>
@@ -846,6 +896,19 @@
     <!-- History -->
     <div id="history" class="panel history-panel">
         <div id="historyList" class="history-empty">暂无计算记录</div>
+    </div>
+
+    <!-- Tutorial -->
+    <div id="tutorial" class="panel eq-panel">
+        <div class="eq-type">
+            <button class="active" onclick="setTutorialType('algebra',this)">代数入门</button>
+            <button onclick="setTutorialType('calculus',this)">微积分基础</button>
+            <button onclick="setTutorialType('geometry',this)">几何入门</button>
+            <button onclick="setTutorialType('probability',this)">概率基础</button>
+            <button onclick="setTutorialType('linearAlgebra',this)">线性代数</button>
+            <button onclick="setTutorialType('trigonometry',this)">三角函数</button>
+        </div>
+        <div id="tutorialContent"></div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/three@0.150.0/build/three.min.js"></script>

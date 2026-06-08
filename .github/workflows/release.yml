@@ -88,16 +88,12 @@ jobs:
             - **Source Code**: Source code (zip) / Source code (tar.gz)
 
             ### Features
-            - Basic & Scientific Calculator
-            - Function Graphing
-            - Equation Solver
-            - Matrix Operations
-            - Geometry Calculator
+            - 15 Calculator Modules (Basic, Scientific, Graphing, Equation, Matrix, Geometry, 3D, Calculus, Statistics, Number Theory, Algebra, Applied Math, Fun, Converter, Tutorial)
             - 3D Visualization (Three.js)
-            - Calculus (Derivatives, Integrals)
-            - Statistics & Probability
-            - Number Theory
-            - Unit Converter
+            - Math Tutorials (Algebra, Calculus, Geometry, Probability, Linear Algebra, Trigonometry)
+            - Multi-language Support (中文/English/日本語)
+            - Improved Input Labels with Descriptions
+            - Unit Converter (8 categories)
           files: |
             app-debug.apk
           draft: false

@@ -1,0 +1,100 @@
+/*
+ * CSS 变量系统
+ * 统一管理颜色、间距、字体、动画等设计 Token
+ */
+
+:root {
+    /* ========== 颜色 — 亮色主题 ========== */
+    --color-bg-primary: #f5f5f7;
+    --color-bg-secondary: #ffffff;
+    --color-bg-tertiary: #e8e8ed;
+    --color-text-primary: #1d1d1f;
+    --color-text-secondary: #6e6e73;
+    --color-text-tertiary: #aeaeb2;
+    --color-accent: #007aff;
+    --color-accent-hover: #0056cc;
+    --color-surface: rgba(255, 255, 255, 0.8);
+    --color-border: rgba(0, 0, 0, 0.1);
+    --color-shadow: rgba(0, 0, 0, 0.08);
+
+    /* 语义色 */
+    --color-red: #ff3b30;
+    --color-orange: #ff9500;
+    --color-green: #34c759;
+    --color-blue: #007aff;
+    --color-purple: #af52de;
+    --color-cyan: #5ac8fa;
+
+    /* 计算器专用色 */
+    --calc-display-bg: #1c1c2e;
+    --calc-display-text: #ffffff;
+    --calc-btn-number: #333344;
+    --calc-btn-operator: #ff9f0a;
+    --calc-btn-function: #555566;
+    --calc-btn-equals: #30d158;
+    --calc-btn-text: #ffffff;
+
+    /* ========== 间距 ========== */
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 48px;
+
+    /* ========== 圆角 ========== */
+    --radius-sm: 8px;
+    --radius-md: 12px;
+    --radius-lg: 16px;
+    --radius-xl: 20px;
+    --radius-full: 9999px;
+
+    /* ========== 字体 ========== */
+    --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-mono: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+    --font-size-xs: 0.75rem;
+    --font-size-sm: 0.875rem;
+    --font-size-base: 1rem;
+    --font-size-lg: 1.25rem;
+    --font-size-xl: 1.5rem;
+    --font-size-2xl: 2rem;
+    --font-size-3xl: 2.5rem;
+
+    /* ========== 阴影 ========== */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+
+    /* ========== 动画 ========== */
+    --transition-fast: 150ms ease;
+    --transition-normal: 300ms ease;
+    --transition-slow: 500ms ease;
+    --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ========== 暗色主题 ========== */
+[data-theme="dark"] {
+    --color-bg-primary: #0f0f1a;
+    --color-bg-secondary: #1a1a2e;
+    --color-bg-tertiary: #252540;
+    --color-text-primary: #f5f5f7;
+    --color-text-secondary: #a1a1a6;
+    --color-text-tertiary: #636366;
+    --color-accent: #0a84ff;
+    --color-accent-hover: #409cff;
+    --color-surface: rgba(255, 255, 255, 0.05);
+    --color-border: rgba(255, 255, 255, 0.1);
+    --color-shadow: rgba(0, 0, 0, 0.3);
+
+    --color-red: #ff453a;
+    --color-orange: #ff9f0a;
+    --color-green: #30d158;
+    --color-blue: #0a84ff;
+    --color-purple: #bf5af2;
+    --color-cyan: #64d2ff;
+
+    --calc-display-bg: #0d0d1a;
+    --calc-btn-number: #2a2a3d;
+    --calc-btn-function: #3a3a4d;
+}

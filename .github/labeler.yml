@@ -1,45 +1,26 @@
-# Label configuration for PR labeler
+# Labels for PRs based on changed files
+electron-app:
+  - electron-calculator/**
 
-# Electron app changes
-electron:
-  - changed-files:
-    - any-glob-to-any-file: 'electron-calculator/**'
+android-app:
+  - android-apk/**
 
-# Android app changes
-android:
-  - changed-files:
-    - any-glob-to-any-file: 'android-apk/**'
-
-# Web calculator changes
-web:
-  - changed-files:
-    - any-glob-to-any-file: 'calculator/**'
-
-# Flutter app changes
-flutter:
-  - changed-files:
-    - any-glob-to-any-file: 'advanced_calculator/**'
-
-# Documentation changes
 documentation:
-  - changed-files:
-    - any-glob-to-any-file:
-      - '*.md'
-      - 'docs/**'
+  - '*.md'
+  - docs/**
 
-# CI/CD changes
-ci:
-  - changed-files:
-    - any-glob-to-any-file: '.github/**'
+ci-cd:
+  - .github/**
 
-# CSS/Style changes
-styles:
-  - changed-files:
-    - any-glob-to-any-file:
-      - '**/*.css'
-      - '**/*.scss'
+calculator-module:
+  - electron-calculator/app.js
 
-# JavaScript changes
-javascript:
-  - changed-files:
-    - any-glob-to-any-file: '**/*.js'
+ui-ux:
+  - electron-calculator/index.html
+  - electron-calculator/src/styles/**
+
+tutorial:
+  - electron-calculator/app.js
+
+i18n:
+  - electron-calculator/app.js

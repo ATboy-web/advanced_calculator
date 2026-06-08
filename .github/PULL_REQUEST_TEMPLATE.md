@@ -28,6 +28,8 @@ Fixes #
 - [ ] Number Theory
 - [ ] Algebra
 - [ ] Applied Math
+- [ ] Math Tutorial
+- [ ] Multi-language (i18n)
 - [ ] Fun Calculations
 - [ ] Unit Converter
 - [ ] CI/CD

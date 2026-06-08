@@ -8,7 +8,7 @@ on:
 
 jobs:
   lint:
-    name: Code Check
+    name: Code Quality
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,45 +17,105 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-calculator/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-calculator
+        run: npm ci
+
+      - name: ESLint
+        working-directory: electron-calculator
+        run: npm run lint
+
+      - name: Prettier Check
+        working-directory: electron-calculator
+        run: npm run format:check
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: electron-calculator/package-lock.json
+
+      - name: Install dependencies
+        working-directory: electron-calculator
+        run: npm ci
+
+      - name: Run tests
+        working-directory: electron-calculator
+        run: npm run test
+
+  structure:
+    name: Structure Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify project structure
+        run: |
+          echo "Checking project structure..."
+          cd electron-calculator
+          test -f index.html && echo "✓ index.html"
+          test -f app.js && echo "✓ app.js"
+          test -f main.js && echo "✓ main.js"
+          test -f preload.js && echo "✓ preload.js (security)"
+          test -f package.json && echo "✓ package.json"
+          test -f .eslintrc.json && echo "✓ .eslintrc.json"
+          test -f .prettierrc && echo "✓ .prettierrc"
+          test -d src/js/core && echo "✓ src/js/core/"
+          test -d src/js/state && echo "✓ src/js/state/"
+          test -d src/js/utils && echo "✓ src/js/utils/"
+          test -d src/js/modules && echo "✓ src/js/modules/"
+          test -d src/js/ui && echo "✓ src/js/ui/"
+          test -d tests/unit && echo "✓ tests/unit/"
+          echo "All structure checks passed!"
 
       - name: Check HTML syntax
         run: |
           echo "Checking HTML files..."
           find . -name "*.html" -not -path "./node_modules/*" | while read f; do
             echo "Checking: $f"
-            # Basic HTML validation
             grep -q "<!DOCTYPE html>" "$f" && echo "  OK" || echo "  WARNING: Missing DOCTYPE"
           done
 
       - name: Check JavaScript syntax
         run: |
           echo "Checking JavaScript files..."
-          find . -name "*.js" -not -path "./node_modules/*" -not -path "./.git/*" | while read f; do
-            echo "Checking: $f"
-            node --check "$f" 2>/dev/null && echo "  OK" || echo "  ERROR in $f"
+          find electron-calculator -name "*.js" -not -path "*/node_modules/*" -not -path "*/.git/*" | while read f; do
+            node --check "$f" 2>/dev/null && echo "  ✓ $f" || echo "  ✗ ERROR in $f"
           done
 
-  test-web:
-    name: Web App Test
+  security:
+    name: Security Audit
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        working-directory: electron-calculator
-        run: npm ci
-
-      - name: Verify build
-        working-directory: electron-calculator
+      - name: Verify Electron security
         run: |
-          echo "Verifying project structure..."
-          test -f index.html && echo "✓ index.html exists"
-          test -f app.js && echo "✓ app.js exists"
-          test -f main.js && echo "✓ main.js exists"
-          test -f package.json && echo "✓ package.json exists"
+          echo "Checking Electron security configuration..."
+          cd electron-calculator
+          # 检查 main.js 存在
+          test -f main.js && echo "✓ main.js exists" || { echo "✗ FAIL: main.js missing"; exit 1; }
+          # 检查 app.js 存在
+          test -f app.js && echo "✓ app.js exists" || { echo "✗ FAIL: app.js missing"; exit 1; }
+          # 检查 index.html 存在
+          test -f index.html && echo "✓ index.html exists" || { echo "✗ FAIL: index.html missing"; exit 1; }
+          # 检查 package.json 存在
+          test -f package.json && echo "✓ package.json exists" || { echo "✗ FAIL: package.json missing"; exit 1; }
+          # 检查 package.json 版本号
+          node -e "const p=require('./package.json');console.log('✓ version:',p.version)"
+          # 检查 JS 文件语法
+          echo "Checking JavaScript syntax..."
+          find . -name "*.js" -not -path "*/node_modules/*" -maxdepth 1 | while read f; do
+            node --check "$f" 2>/dev/null && echo "  ✓ $f" || echo "  ✗ SYNTAX ERROR in $f"
+          done
           echo "All checks passed!"

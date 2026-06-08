@@ -1,6 +1,6 @@
 {
   "name": "advanced-calculator",
-  "version": "1.0.0",
+  "version": "2.1.0",
   "description": "跨平台高级计算器 - Electron版本",
   "main": "main.js",
   "scripts": {
@@ -8,14 +8,25 @@
     "build:win": "electron-builder --win",
     "build:mac": "electron-builder --mac",
     "build:linux": "electron-builder --linux",
-    "build:all": "electron-builder --win --mac --linux"
+    "build:all": "electron-builder --win --mac --linux",
+    "lint": "eslint app.js src/js/ --ext .js",
+    "lint:fix": "eslint app.js src/js/ --ext .js --fix",
+    "format": "prettier --write \"**/*.{js,css,html,json}\" --ignore-path .gitignore",
+    "format:check": "prettier --check \"**/*.{js,css,html,json}\" --ignore-path .gitignore",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "validate": "npm run lint && npm run format:check && npm run test"
   },
   "keywords": ["calculator", "electron", "cross-platform"],
   "author": "CodeBuddy",
   "license": "MIT",
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.0.0"
+    "electron-builder": "^24.0.0",
+    "eslint": "^8.56.0",
+    "prettier": "^3.2.0",
+    "vitest": "^1.2.0"
   },
   "build": {
     "appId": "com.advanced.calculator",

@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -10,8 +10,8 @@ function createWindow() {
         minWidth: 380,
         minHeight: 600,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
+            nodeIntegration: true,       // 允许 app.js 中的 DOM 操作
+            contextIsolation: false      // 兼容 Three.js 和现有代码
         },
         icon: path.join(__dirname, 'icon.png'),
         title: '高级计算器',
@@ -40,10 +40,10 @@ function createWindow() {
         {
             label: '视图',
             submenu: [
-                { label: '重新加载', accelerator: 'CmdOrCtrl+R', click: () => mainWindow.reload() },
-                { label: '开发者工具', accelerator: 'F12', click: () => mainWindow.toggleDevTools() },
+                { label: '重新加载', accelerator: 'CmdOrCtrl+R', click: () => mainWindow?.reload() },
+                { label: '开发者工具', accelerator: 'F12', click: () => mainWindow?.toggleDevTools() },
                 { type: 'separator' },
-                { label: '全屏', accelerator: 'F11', click: () => mainWindow.setFullScreen(!mainWindow.isFullScreen()) }
+                { label: '全屏', accelerator: 'F11', click: () => mainWindow?.setFullScreen(!mainWindow?.isFullScreen()) }
             ]
         },
         {
@@ -59,14 +59,29 @@ function createWindow() {
 }
 
 function showAbout() {
-    const { dialog } = require('electron');
     dialog.showMessageBox(mainWindow, {
         type: 'info',
         title: '关于高级计算器',
-        message: '高级计算器 v1.0.0',
+        message: '高级计算器 v2.0.0',
         detail: '跨平台高级计算器应用\n支持基础计算、科学计算、函数绘图、方程求解、单位转换等功能\n\n© 2026 CodeBuddy'
     });
 }
+
+// IPC handlers
+ipcMain.handle('dialog:about', () => {
+    showAbout();
+});
+
+// 窗口控制 IPC
+ipcMain.on('window:minimize', () => mainWindow?.minimize());
+ipcMain.on('window:maximize', () => {
+    if (mainWindow?.isMaximized()) {
+        mainWindow.unmaximize();
+    } else {
+        mainWindow?.maximize();
+    }
+});
+ipcMain.on('window:close', () => mainWindow?.close());
 
 app.whenReady().then(createWindow);
 
