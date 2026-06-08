@@ -1,0 +1,9 @@
+# Issue 模板选择器配置
+blank_issues_enabled: true
+contact_links:
+  - name: 使用问题
+    url: https://github.com/ATboy-web/advanced_calculator/discussions
+    about: 如果你在使用过程中遇到问题，请在 Discussions 中提问
+  - name: 查看文档
+    url: https://github.com/ATboy-web/advanced_calculator#readme
+    about: 查看项目 README 了解安装和使用说明

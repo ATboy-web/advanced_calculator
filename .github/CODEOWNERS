@@ -1,0 +1,17 @@
+# Code Owners - 自动为 PR 分配 reviewer
+# 语法: <pattern> <@username>
+
+# 默认所有文件
+* @ATboy-web
+
+# Electron 应用
+/electron-calculator/ @ATboy-web
+
+# Android 应用
+/android-apk/ @ATboy-web
+
+# CI/CD 工作流
+/.github/ @ATboy-web
+
+# 文档
+*.md @ATboy-web

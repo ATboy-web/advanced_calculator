@@ -3,7 +3,10 @@
 [![CI](https://github.com/ATboy-web/advanced_calculator/actions/workflows/ci.yml/badge.svg)](https://github.com/ATboy-web/advanced_calculator/actions/workflows/ci.yml)
 [![Release](https://github.com/ATboy-web/advanced_calculator/actions/workflows/release.yml/badge.svg)](https://github.com/ATboy-web/advanced_calculator/actions/workflows/release.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/ATboy-web/advanced_calculator/releases)
+[![Version](https://img.shields.io/badge/version-2.2.0-blue.svg)](https://github.com/ATboy-web/advanced_calculator/releases)
+[![GitHub Stars](https://img.shields.io/github/stars/ATboy-web/advanced_calculator?style=social)](https://github.com/ATboy-web/advanced_calculator/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/ATboy-web/advanced_calculator)](https://github.com/ATboy-web/advanced_calculator/issues)
+[![GitHub Forks](https://img.shields.io/github/forks/ATboy-web/advanced_calculator?style=social)](https://github.com/ATboy-web/advanced_calculator/network/members)
 
 > 一款功能强大的跨平台科学计算器，支持 15+ 计算模块、3D 可视化、数学教程和多语言界面。
 
@@ -190,6 +193,11 @@ chore: 构建/工具
 
 ## 更新日志
 
+### v2.2.0 (2026-06-09)
+- **多语言升级** - 日语替换为印地语和西班牙语（全球使用人数前三语言）
+- **GitHub 仓库增强** - 新增 CODEOWNERS、Dependabot、FUNDING.yml 等配置
+- **编辑器配置** - 新增 .editorconfig 统一开发环境
+
 ### v2.1.0 (2026-06-08)
 - **数学教程系统** - 6大分类(代数/微积分/几何/概率/线性代数/三角函数)的交互式学习教程
 - **多语言支持** - 中文/English/हिन्दी/Español 四语界面切换
@@ -214,6 +222,26 @@ chore: 构建/工具
 - 基础计算和科学计算
 - 绘图功能
 - 方程求解
+
+---
+
+## 社区
+
+- [GitHub Discussions](https://github.com/ATboy-web/advanced_calculator/discussions) - 提问、分享想法和交流
+- [Issue Tracker](https://github.com/ATboy-web/advanced_calculator/issues) - 报告 Bug 或请求新功能
+- [Projects](https://github.com/ATboy-web/advanced_calculator/projects) - 查看项目开发进度
+- [Releases](https://github.com/ATboy-web/advanced_calculator/releases) - 下载最新版本
+- [Wiki](https://github.com/ATboy-web/advanced_calculator/wiki) - 项目文档和使用指南
+
+### 版本发布
+
+| 版本 | 日期 | 主要更新 |
+|------|------|----------|
+| v2.2.0 | 2026-06-09 | 多语言升级(印地语/西班牙语)、GitHub 仓库增强 |
+| v2.1.0 | 2026-06-08 | 数学教程系统、多语言支持、输入标签优化 |
+| v2.0.0 | 2026-06-06 | 3D 可视化 (Three.js) |
+| v1.5.0 | - | 微积分、概率统计、数论、代数、应用数学 |
+| v1.0.0 | - | 初始版本 |
 
 ---
 
@@ -265,6 +293,11 @@ git clone https://github.com/ATboy-web/advanced_calculator.git
 cd advanced_calculator/electron-calculator
 npm install && npm start
 ```
+
+### Community
+- [Discussions](https://github.com/ATboy-web/advanced_calculator/discussions) - Ask questions and share ideas
+- [Issues](https://github.com/ATboy-web/advanced_calculator/issues) - Report bugs or request features
+- [Releases](https://github.com/ATboy-web/advanced_calculator/releases) - Download latest version
 
 ---
 

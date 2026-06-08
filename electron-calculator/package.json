@@ -1,6 +1,6 @@
 {
   "name": "advanced-calculator",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "跨平台高级计算器 - Electron版本",
   "main": "main.js",
   "scripts": {

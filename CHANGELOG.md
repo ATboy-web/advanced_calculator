@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.2.0] - 2026-06-09
+
+### Changed
+- **Multi-language Update** - Replaced Japanese with Hindi and Spanish (top 3 world languages excluding Chinese)
+  - 4 languages now: Chinese (中文), English, Hindi (हिन्दी), Spanish (Español)
+  - All tutorial content translated to Hindi and Spanish
+  - Updated language selector UI with 4 language options
+
+### Added
+- **GitHub Repository Enhancements**
+  - CODEOWNERS file for automatic PR reviewer assignment
+  - Dependabot configuration for automatic dependency updates
+  - FUNDING.yml for sponsorship configuration
+  - Issue template chooser with Discussions link
+  - .editorconfig for consistent editor settings across contributors
+
 ## [2.1.0] - 2026-06-08
 
 ### Added
