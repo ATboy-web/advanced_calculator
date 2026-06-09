@@ -1,0 +1,55 @@
+{
+  "name": "advanced-calculator-plugin",
+  "pluginName": "高级计算器",
+  "description": "功能完整的高级计算器uTools插件，包含基础计算、科学计算、方程求解、矩阵运算、几何计算、概率统计、数论、单位转换、趣味工具和数学教程等全部功能。支持中/英/印地/西班牙四语，纯前端实现，所有计算本地完成。\n\n仓库地址：https://github.com/ATboy-web/advanced_calculator",
+  "main": "index.html",
+  "preload": "preload.js",
+  "author": "ATboy-web",
+  "version": "1.0.0",
+  "logo": "logo.png",
+  "features": [
+    {
+      "code": "calculator",
+      "explain": "打开高级计算器",
+      "cmds": ["计算器", "calculator", "计算", "科学计算器", "高级计算器"]
+    },
+    {
+      "code": "equation",
+      "explain": "方程求解",
+      "cmds": ["方程", "equation", "求解", "解方程"]
+    },
+    {
+      "code": "matrix",
+      "explain": "矩阵运算",
+      "cmds": ["矩阵", "matrix", "矩阵计算", "行列式", "逆矩阵"]
+    },
+    {
+      "code": "geometry",
+      "explain": "几何计算",
+      "cmds": ["几何", "geometry", "面积", "体积"]
+    },
+    {
+      "code": "statistics",
+      "explain": "概率统计",
+      "cmds": ["概率", "统计", "statistics", "组合"]
+    },
+    {
+      "code": "converter",
+      "explain": "单位转换",
+      "cmds": ["转换", "converter", "单位转换", "进制"]
+    },
+    {
+      "code": "tutorial",
+      "explain": "数学教程",
+      "cmds": ["教程", "tutorial", "数学教程"]
+    }
+  ],
+  "development": {
+    "main": "index.html",
+    "preload": "preload.js"
+  },
+  "production": {
+    "main": "index.html",
+    "preload": "preload.js"
+  }
+}

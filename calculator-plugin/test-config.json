@@ -1,0 +1,5 @@
+{
+  "test": true,
+  "description": "测试配置文件格式",
+  "note": "plugin.json 是 JSON 格式，不是 HTML"
+}

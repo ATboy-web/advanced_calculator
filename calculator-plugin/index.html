@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>高级计算器插件</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f2f5;color:#333;font-size:14px;overflow-x:hidden}
+.header{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:16px;font-weight:600}
+.header-right{display:flex;align-items:center;gap:12px}
+.lang-btn{background:rgba(255,255,255,0.2);border:none;color:#fff;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px}
+.lang-btn:hover{background:rgba(255,255,255,0.3)}
+.lang-menu{position:absolute;top:100%;right:0;background:#fff;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none;z-index:200;overflow:hidden}
+.lang-menu button{display:block;width:100%;padding:8px 16px;border:none;background:none;cursor:pointer;text-align:left;color:#333}
+.lang-menu button:hover{background:#f5f5f5}
+.nav{display:flex;flex-wrap:wrap;background:#fff;border-bottom:1px solid #e0e0e0;padding:4px;gap:2px;position:sticky;top:44px;z-index:99}
+.nav button{padding:6px 10px;border:none;background:none;cursor:pointer;border-radius:6px;font-size:12px;color:#666;transition:all 0.2s;white-space:nowrap}
+.nav button:hover{background:#f0f0f0}
+.nav button.active{background:#667eea;color:#fff}
+.panel{display:none;padding:16px;max-width:600px;margin:0 auto}
+.panel.active{display:block}
+.eq-type{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.eq-type button{padding:6px 12px;border:1px solid #ddd;background:#fff;border-radius:6px;cursor:pointer;font-size:12px;transition:all 0.2s}
+.eq-type button:hover{border-color:#667eea}
+.eq-type button.active{background:#667eea;color:#fff;border-color:#667eea}
+.eq-input{margin-bottom:10px}
+.eq-input label{display:block;font-size:12px;color:#666;margin-bottom:4px}
+.eq-input input,.eq-input select{width:100%;padding:8px 10px;border:1px solid #ddd;border-radius:6px;font-size:14px}
+.eq-input input:focus,.eq-input select:focus{outline:none;border-color:#667eea}
+.eq-input.wide{width:100%}
+.eq-row{display:flex;gap:8px}
+.eq-row .eq-input{flex:1}
+.eq-desc{font-size:12px;color:#999;margin-bottom:10px;font-style:italic}
+.action-btn{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;width:100%;margin-top:10px;transition:transform 0.2s}
+.action-btn:hover{transform:translateY(-1px)}
+.action-btn:active{transform:translateY(0)}
+.eq-result{margin-top:12px;padding:12px;background:#f8f9fa;border-radius:8px;font-family:monospace;white-space:pre-wrap;line-height:1.6;color:#333;display:none}
+.display-container{background:#fff;border-radius:12px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,0.08)}
+#display{width:100%;padding:12px;font-size:24px;text-align:right;border:2px solid #e0e0e0;border-radius:8px;font-family:monospace}
+.btn-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.btn{padding:14px;border:none;border-radius:8px;font-size:16px;cursor:pointer;transition:all 0.15s;font-weight:500}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-num{background:#f8f9fa;color:#333}
+.btn-num:hover{background:#e9ecef}
+.btn-op{background:#667eea;color:#fff}
+.btn-op:hover{background:#5a6fd6}
+.btn-eq{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff}
+.btn-clear{background:#ff6b6b;color:#fff}
+.btn-clear:hover{background:#ee5a5a}
+.btn-back{background:#ffa726;color:#fff}
+.btn-back:hover{background:#f59b20}
+.sci-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px}
+.sci-btn{padding:10px;border:1px solid #e0e0e0;background:#fff;border-radius:6px;cursor:pointer;font-size:13px;transition:all 0.15s}
+.sci-btn:hover{border-color:#667eea;color:#667eea}
+.matrix-grid{display:flex;flex-wrap:wrap;gap:16px}
+.matrix-matrix{display:flex;flex-direction:column;gap:4px}
+.matrix-row{display:flex;gap:4px}
+.matrix-cell{width:60px;padding:6px;text-align:center;border:1px solid #ddd;border-radius:4px;font-size:13px}
+.matrix-label{font-size:13px;color:#666;margin-bottom:4px;font-weight:500}
+.history-list{max-height:300px;overflow-y:auto}
+.history-item{padding:10px;border-bottom:1px solid #f0f0f0;cursor:pointer;transition:background 0.2s}
+.history-item:hover{background:#f8f9fa}
+.history-item .expr{font-family:monospace;color:#333}
+.history-item .result{font-size:12px;color:#667eea;margin-top:2px}
+.history-empty{text-align:center;color:#999;padding:40px}
+.tutorial-lesson{background:#fff;border-radius:12px;padding:16px}
+.tutorial-nav{display:flex;align-items:center;gap:6px;margin-bottom:12px}
+.tutorial-nav button{width:28px;height:28px;border:1px solid #ddd;background:#fff;border-radius:50%;cursor:pointer;font-size:12px}
+.tutorial-nav button.active{background:#667eea;color:#fff;border-color:#667eea}
+.tutorial-count{font-size:12px;color:#999;margin-left:auto}
+.tutorial-title{font-size:18px;font-weight:600;margin-bottom:12px;color:#333}
+.formula-box{background:#f8f9fa;border-radius:8px;padding:12px;margin-bottom:12px}
+.formula-title{font-size:12px;color:#667eea;font-weight:600;margin-bottom:6px}
+.formula-box pre{font-family:monospace;line-height:1.6;margin:0}
+.process-box{background:#e8f4fd;border-radius:8px;padding:12px;margin-bottom:12px}
+.process-box .step{color:#333;line-height:1.6}
+.calculus-step{background:#fff3e0;border-radius:8px;padding:12px;margin-bottom:12px;color:#e65100}
+.tutorial-inputs{margin-top:12px}
+.converter-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.converter-row select{flex:1;padding:8px;border:1px solid #ddd;border-radius:6px}
+.swap-btn{background:#667eea;color:#fff;border:none;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+@media(max-width:480px){.nav button{padding:5px 8px;font-size:11px}.btn{padding:12px;font-size:14px}}
+</style>
+</head>
+<body>
+<div class="header">
+    <h1 data-i18n="title">高级计算器</h1>
+    <div class="header-right">
+        <div style="position:relative">
+            <button class="lang-btn" onclick="toggleLangMenu()" data-i18n="lang">语言</button>
+            <div class="lang-menu" id="langMenu">
+                <button onclick="setLanguage('zh')">中文</button>
+                <button onclick="setLanguage('en')">English</button>
+                <button onclick="setLanguage('hi')">हिन्दी</button>
+                <button onclick="setLanguage('es')">Español</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="nav" id="nav">
+    <button class="active" data-panel="basic" onclick="switchPanel('basic')" data-i18n="basic">基础</button>
+    <button data-panel="scientific" onclick="switchPanel('scientific')" data-i18n="scientific">科学</button>
+    <button data-panel="equation" onclick="switchPanel('equation')" data-i18n="equation">方程</button>
+    <button data-panel="matrix" onclick="switchPanel('matrix')" data-i18n="matrix">矩阵</button>
+    <button data-panel="geometry" onclick="switchPanel('geometry')" data-i18n="geometry">几何</button>
+    <button data-panel="statistics" onclick="switchPanel('statistics')" data-i18n="statistics">概率统计</button>
+    <button data-panel="numbertheory" onclick="switchPanel('numbertheory')" data-i18n="numbertheory">数论</button>
+    <button data-panel="converter" onclick="switchPanel('converter')" data-i18n="converter">转换</button>
+    <button data-panel="fun" onclick="switchPanel('fun')" data-i18n="fun">趣味</button>
+    <button data-panel="history" onclick="switchPanel('history')" data-i18n="history">历史</button>
+    <button data-panel="tutorial" onclick="switchPanel('tutorial')" data-i18n="tutorial">教程</button>
+</div>
+
+<!-- 基础计算器 -->
+<div class="panel active" id="panel-basic">
+    <div class="display-container">
+        <input type="text" id="display" value="0" readonly>
+    </div>
+    <div class="btn-grid">
+        <button class="btn btn-clear" onclick="calc.clear()" data-i18n="clear">AC</button>
+        <button class="btn btn-op" onclick="calc.negate()" data-i18n="negate">±</button>
+        <button class="btn btn-op" onclick="calc.percent()" data-i18n="percent">%</button>
+        <button class="btn btn-op" onclick="calc.append('÷')" data-i18n="divide">÷</button>
+        <button class="btn btn-num" onclick="calc.append('7')">7</button>
+        <button class="btn btn-num" onclick="calc.append('8')">8</button>
+        <button class="btn btn-num" onclick="calc.append('9')">9</button>
+        <button class="btn btn-op" onclick="calc.append('×')" data-i18n="multiply">×</button>
+        <button class="btn btn-num" onclick="calc.append('4')">4</button>
+        <button class="btn btn-num" onclick="calc.append('5')">5</button>
+        <button class="btn btn-num" onclick="calc.append('6')">6</button>
+        <button class="btn btn-op" onclick="calc.append('−')" data-i18n="subtract">−</button>
+        <button class="btn btn-num" onclick="calc.append('1')">1</button>
+        <button class="btn btn-num" onclick="calc.append('2')">2</button>
+        <button class="btn btn-num" onclick="calc.append('3')">3</button>
+        <button class="btn btn-op" onclick="calc.append('+')" data-i18n="add">+</button>
+        <button class="btn btn-num" onclick="calc.append('0')" style="grid-column:span 2">0</button>
+        <button class="btn btn-num" onclick="calc.append('.')" data-i18n="decimal">.</button>
+        <button class="btn btn-eq" onclick="calc.calculate()" data-i18n="equals">=</button>
+    </div>
+</div>
+
+<!-- 科学计算器 -->
+<div class="panel" id="panel-scientific">
+    <div class="display-container">
+        <input type="text" id="display" value="0" readonly>
+    </div>
+    <div class="btn-grid">
+        <button class="btn btn-clear" onclick="calc.clear()">AC</button>
+        <button class="btn btn-back" onclick="calc.backspace()" data-i18n="backspace">⌫</button>
+        <button class="btn btn-op" onclick="calc.sciFunc('abs')" data-i18n="abs">|x|</button>
+        <button class="btn btn-op" onclick="calc.sciFunc('factorial')" data-i18n="factorial">n!</button>
+        <button class="btn btn-num" onclick="calc.append('7')">7</button>
+        <button class="btn btn-num" onclick="calc.append('8')">8</button>
+        <button class="btn btn-num" onclick="calc.append('9')">9</button>
+        <button class="btn btn-op" onclick="calc.append('÷')">÷</button>
+        <button class="btn btn-num" onclick="calc.append('4')">4</button>
+        <button class="btn btn-num" onclick="calc.append('5')">5</button>
+        <button class="btn btn-num" onclick="calc.append('6')">6</button>
+        <button class="btn btn-op" onclick="calc.append('×')">×</button>
+        <button class="btn btn-num" onclick="calc.append('1')">1</button>
+        <button class="btn btn-num" onclick="calc.append('2')">2</button>
+        <button class="btn btn-num" onclick="calc.append('3')">3</button>
+        <button class="btn btn-op" onclick="calc.append('−')">−</button>
+        <button class="btn btn-num" onclick="calc.append('0')">0</button>
+        <button class="btn btn-num" onclick="calc.append('.')">.</button>
+        <button class="btn btn-op" onclick="calc.negate()">±</button>
+        <button class="btn btn-op" onclick="calc.append('+')">+</button>
+        <button class="btn btn-eq" onclick="calc.calculate()" style="grid-column:span 4">=</button>
+    </div>
+    <div class="sci-grid">
+        <button class="sci-btn" onclick="calc.sciFunc('sin')">sin</button>
+        <button class="sci-btn" onclick="calc.sciFunc('cos')">cos</button>
+        <button class="sci-btn" onclick="calc.sciFunc('tan')">tan</button>
+        <button class="sci-btn" onclick="calc.sciFunc('ln')">ln</button>
+        <button class="sci-btn" onclick="calc.sciFunc('asin')">sin⁻¹</button>
+        <button class="sci-btn" onclick="calc.sciFunc('acos')">cos⁻¹</button>
+        <button class="sci-btn" onclick="calc.sciFunc('atan')">tan⁻¹</button>
+        <button class="sci-btn" onclick="calc.sciFunc('log')">log</button>
+        <button class="sci-btn" onclick="calc.sciFunc('sqrt')">√</button>
+        <button class="sci-btn" onclick="calc.sciFunc('square')">x²</button>
+        <button class="sci-btn" onclick="calc.sciFunc('cube')">x³</button>
+        <button class="sci-btn" onclick="calc.sciFunc('reciprocal')">1/x</button>
+        <button class="sci-btn" onclick="calc.append('(')">(</button>
+        <button class="sci-btn" onclick="calc.append(')')">)</button>
+        <button class="sci-btn" onclick="calc.append('π')">π</button>
+        <button class="sci-btn" onclick="calc.append('e')">e</button>
+        <button class="sci-btn" onclick="calc.sciFunc('exp')">eˣ</button>
+        <button class="sci-btn" onclick="calc.sciFunc('10x')">10ˣ</button>
+        <button class="sci-btn" onclick="calc.sciFunc('ceil')">⌈x⌉</button>
+        <button class="sci-btn" onclick="calc.sciFunc('floor')">⌊x⌋</button>
+    </div>
+</div>
+
+<!-- 方程求解 -->
+<div class="panel" id="panel-equation">
+    <div class="eq-type">
+        <button class="active" onclick="equation.setType('linear',this)" data-i18n="linear">一元一次</button>
+        <button onclick="equation.setType('quadratic',this)" data-i18n="quadratic">一元二次</button>
+        <button onclick="equation.setType('system',this)" data-i18n="system">二元一次</button>
+    </div>
+    <div id="eqInputs"></div>
+    <button class="action-btn" onclick="equation.solve()" data-i18n="solve">求解</button>
+    <div class="eq-result" id="eqResult"></div>
+</div>
+
+<!-- 矩阵运算 -->
+<div class="panel" id="panel-matrix">
+    <div class="eq-type">
+        <button class="active" onclick="matrix.setOp('add',this)" data-i18n="add">加法</button>
+        <button onclick="matrix.setOp('subtract',this)" data-i18n="subtract">减法</button>
+        <button onclick="matrix.setOp('multiply',this)" data-i18n="multiply">乘法</button>
+        <button onclick="matrix.setOp('determinant',this)" data-i18n="determinant">行列式</button>
+        <button onclick="matrix.setOp('inverse',this)" data-i18n="inverse">逆矩阵</button>
+    </div>
+    <div id="matrixInputs"></div>
+    <button class="action-btn" onclick="matrix.calculate()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="matrixResult"></div>
+</div>
+
+<!-- 几何计算 -->
+<div class="panel" id="panel-geometry">
+    <div class="eq-type">
+        <button class="active" onclick="geometry.setType('circle',this)" data-i18n="circle">圆</button>
+        <button onclick="geometry.setType('triangle',this)" data-i18n="triangle">三角形</button>
+        <button onclick="geometry.setType('rectangle',this)" data-i18n="rectangle">矩形</button>
+        <button onclick="geometry.setType('ellipse',this)" data-i18n="ellipse">椭圆</button>
+        <button onclick="geometry.setType('trapezoid',this)" data-i18n="trapezoid">梯形</button>
+        <button onclick="geometry.setType('polygon',this)" data-i18n="polygon">正多边形</button>
+        <button onclick="geometry.setType('sphere',this)" data-i18n="sphere">球体</button>
+        <button onclick="geometry.setType('cylinder',this)" data-i18n="cylinder">圆柱体</button>
+        <button onclick="geometry.setType('cone',this)" data-i18n="cone">圆锥体</button>
+        <button onclick="geometry.setType('torus',this)" data-i18n="torus">圆环体</button>
+    </div>
+    <div id="geoInputs"></div>
+    <button class="action-btn" onclick="geometry.calculate()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="geoResult"></div>
+</div>
+
+<!-- 概率统计 -->
+<div class="panel" id="panel-statistics">
+    <div class="eq-type">
+        <button class="active" onclick="statistics.setType('combination',this)" data-i18n="combination">组合</button>
+        <button onclick="statistics.setType('permutation',this)" data-i18n="permutation">排列</button>
+        <button onclick="statistics.setType('descriptive',this)" data-i18n="descriptive">描述统计</button>
+        <button onclick="statistics.setType('binomial',this)" data-i18n="binomial">二项分布</button>
+        <button onclick="statistics.setType('normal',this)" data-i18n="normal">正态分布</button>
+        <button onclick="statistics.setType('poisson',this)" data-i18n="poisson">泊松分布</button>
+    </div>
+    <div id="statInputs"></div>
+    <button class="action-btn" onclick="statistics.calculate()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="statResult"></div>
+</div>
+
+<!-- 数论 -->
+<div class="panel" id="panel-numbertheory">
+    <div class="eq-type">
+        <button class="active" onclick="numbertheory.setType('prime',this)" data-i18n="prime">素数检测</button>
+        <button onclick="numbertheory.setType('primeFactor',this)" data-i18n="primeFactor">素因数分解</button>
+        <button onclick="numbertheory.setType('gcd',this)" data-i18n="gcd">GCD/LCM</button>
+        <button onclick="numbertheory.setType('modpow',this)" data-i18n="modpow">模幂运算</button>
+        <button onclick="numbertheory.setType('euler',this)" data-i18n="euler">欧拉函数</button>
+        <button onclick="numbertheory.setType('fibonacci',this)" data-i18n="fibonacci">斐波那契</button>
+    </div>
+    <div id="ntInputs"></div>
+    <button class="action-btn" onclick="numbertheory.calculate()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="ntResult"></div>
+</div>
+
+<!-- 单位转换 -->
+<div class="panel" id="panel-converter">
+    <div class="eq-type">
+        <button class="active" onclick="converter.setCat('length',this)" data-i18n="length">长度</button>
+        <button onclick="converter.setCat('weight',this)" data-i18n="weight">重量</button>
+        <button onclick="converter.setCat('temperature',this)" data-i18n="temperature">温度</button>
+        <button onclick="converter.setCat('area',this)" data-i18n="area">面积</button>
+        <button onclick="converter.setCat('volume',this)" data-i18n="volume">体积</button>
+        <button onclick="converter.setCat('dataSize',this)" data-i18n="dataSize">数据</button>
+        <button onclick="converter.setCat('speed',this)">速度</button>
+        <button onclick="converter.setCat('base',this)" data-i18n="base">进制</button>
+    </div>
+    <div class="eq-input"><label data-i18n="input">输入</label><input id="convValue" placeholder="100"></div>
+    <div class="converter-row">
+        <select id="convFrom"></select>
+        <button class="swap-btn" onclick="converter.swap()">⇄</button>
+        <select id="convTo"></select>
+    </div>
+    <button class="action-btn" onclick="converter.convert()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="convResult"></div>
+</div>
+
+<!-- 趣味工具 -->
+<div class="panel" id="panel-fun">
+    <div class="eq-type">
+        <button class="active" onclick="fun.setType('loan',this)" data-i18n="loan">房贷车贷</button>
+        <button onclick="fun.setType('interest',this)" data-i18n="interest">年化收益</button>
+        <button onclick="fun.setType('currency',this)" data-i18n="currency">汇率计算</button>
+        <button onclick="fun.setType('number',this)" data-i18n="number">大写数字</button>
+        <button onclick="fun.setType('base',this)" data-i18n="base">进制计算</button>
+        <button onclick="fun.setType('speed',this)" data-i18n="speed">速度计算</button>
+        <button onclick="fun.setType('bmi',this)" data-i18n="bmi">BMI计算</button>
+        <button onclick="fun.setType('tax',this)" data-i18n="tax">个税计算</button>
+    </div>
+    <div id="funInputs"></div>
+    <button class="action-btn" onclick="fun.calculate()" data-i18n="calculate">计算</button>
+    <div class="eq-result" id="funResult"></div>
+</div>
+
+<!-- 历史记录 -->
+<div class="panel" id="panel-history">
+    <div class="history-list" id="historyList">
+        <div class="history-empty" data-i18n="noHistory">暂无计算记录</div>
+    </div>
+</div>
+
+<!-- 数学教程 -->
+<div class="panel" id="panel-tutorial">
+    <div class="eq-type">
+        <button class="active" data-tut="algebra" onclick="tutorial.setType('algebra')" data-i18n="algebraTutorial">代数入门</button>
+        <button data-tut="calculus" onclick="tutorial.setType('calculus')" data-i18n="calculusTutorial">微积分基础</button>
+        <button data-tut="geometry" onclick="tutorial.setType('geometry')" data-i18n="geometryTutorial">几何入门</button>
+        <button data-tut="probability" onclick="tutorial.setType('probability')" data-i18n="probabilityTutorial">概率基础</button>
+        <button data-tut="linearAlgebra" onclick="tutorial.setType('linearAlgebra')" data-i18n="linearAlgebraTutorial">线性代数</button>
+        <button data-tut="trigonometry" onclick="tutorial.setType('trigonometry')" data-i18n="trigonometryTutorial">三角函数</button>
+    </div>
+    <div id="tutorialContent"></div>
+</div>
+
+<!-- 加载所有JS模块 -->
+<script src="js/i18n.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/equation.js"></script>
+<script src="js/matrix.js"></script>
+<script src="js/geometry.js"></script>
+<script src="js/statistics.js"></script>
+<script src="js/numbertheory.js"></script>
+<script src="js/converter.js"></script>
+<script src="js/fun.js"></script>
+<script src="js/tutorial.js"></script>
+<script>
+// ===== 面板切换 =====
+function switchPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    const panel = document.getElementById('panel-' + name);
+    const btn = document.querySelector(`.nav [data-panel="${name}"]`);
+    if (panel) panel.classList.add('active');
+    if (btn) btn.classList.add('active');
+    
+    // 初始化对应面板
+    switch(name) {
+        case 'equation': equation.renderInputs(); break;
+        case 'matrix': matrix.renderInputs(); break;
+        case 'geometry': geometry.renderInputs(); break;
+        case 'statistics': statistics.renderInputs(); break;
+        case 'numbertheory': numbertheory.renderInputs(); break;
+        case 'converter': converter.renderUnits(); break;
+        case 'fun': fun.renderInputs(); break;
+        case 'tutorial': tutorial.render(); break;
+        case 'history': renderHistory(); break;
+    }
+}
+
+// ===== 语言切换 =====
+function toggleLangMenu() {
+    const menu = document.getElementById('langMenu');
+    menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+function setLanguage(lang) {
+    i18n.setLang(lang);
+    document.getElementById('langMenu').style.display = 'none';
+}
+
+// ===== 历史记录 =====
+function renderHistory() {
+    const el = document.getElementById('historyList');
+    if (!el) return;
+    if (!calc.history.length) {
+        el.innerHTML = `<div class="history-empty" data-i18n="noHistory">${i18n.t('noHistory')}</div>`;
+        return;
+    }
+    el.innerHTML = calc.history.map((h, i) => 
+        `<div class="history-item" onclick="useHistory(${i})">
+            <div class="expr">${h.expr} = ${h.result}</div>
+        </div>`
+    ).reverse().join('');
+}
+
+function useHistory(idx) {
+    const h = calc.history[idx];
+    if (h) {
+        calc.display = String(h.result);
+        calc.newNumber = true;
+        switchPanel('basic');
+        calc.updateDisplay();
+    }
+}
+
+// ===== 键盘事件 =====
+document.addEventListener('keydown', function(e) {
+    const activePanel = document.querySelector('.panel.active');
+    if (!activePanel) return;
+    const id = activePanel.id;
+    
+    // 基础和科学计算器支持键盘
+    if (id === 'panel-basic' || id === 'panel-scientific') {
+        const key = e.key;
+        if (/[0-9]/.test(key)) { calc.append(key); e.preventDefault(); }
+        else if (key === '.') { calc.append('.'); e.preventDefault(); }
+        else if (key === '+') { calc.append('+'); e.preventDefault(); }
+        else if (key === '-') { calc.append('−'); e.preventDefault(); }
+        else if (key === '*') { calc.append('×'); e.preventDefault(); }
+        else if (key === '/') { calc.append('÷'); e.preventDefault(); }
+        else if (key === '(' || key === ')') { calc.append(key); e.preventDefault(); }
+        else if (key === 'Enter') { calc.calculate(); e.preventDefault(); }
+        else if (key === 'Escape') { calc.clear(); e.preventDefault(); }
+        else if (key === 'Backspace') { calc.backspace(); e.preventDefault(); }
+    }
+});
+
+// ===== 初始化 =====
+document.addEventListener('DOMContentLoaded', function() {
+    i18n.updateUI();
+    equation.renderInputs();
+    matrix.renderInputs();
+    geometry.renderInputs();
+    statistics.renderInputs();
+    numbertheory.renderInputs();
+    converter.renderUnits();
+    fun.renderInputs();
+    tutorial.render();
+});
+
+// 点击外部关闭语言菜单
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.lang-btn') && !e.target.closest('.lang-menu')) {
+        document.getElementById('langMenu').style.display = 'none';
+    }
+});
+</script>
+</body>
+</html>
